@@ -20,6 +20,8 @@ $ npm install
 $ npm run dev
 ```
 
+> To use the node debugger in vscode, once it's running in dev (required for the --inspect) then go to the debug panel (Ctl + Shift + D). Then Select Node:Nodemon
+
 ## Testing
 
 ```
