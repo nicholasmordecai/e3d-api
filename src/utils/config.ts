@@ -10,6 +10,7 @@ export interface IOptions {
     mysqlPassword?: string;
     mysqlDatabase?: string;
     mysqlPort?: number;
+    accessTokenSecret?: string;
 }
 
 export class Config {
@@ -21,6 +22,7 @@ export class Config {
         mysqlPassword: { env: 'MYSQL_DB_PASSWORD', required: true, type: 'string' },
         mysqlDatabase: { env: 'MYSQL_DB_DATABASE', required: true, type: 'string' },
         mysqlPort: { env: 'MYSQL_DB_PORT', required: true, type: 'number' },
+        accessTokenSecret: { env: 'JWT_ACCESS_SECRET', required: true, type: 'string' },
     }
 
     public static initalise(config: IOptions): IOptions {

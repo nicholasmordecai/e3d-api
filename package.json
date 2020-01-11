@@ -18,11 +18,13 @@
   "license": "MIT",
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
+    "@types/jsonwebtoken": "^8.3.5",
     "bcrypt": "^3.0.7",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
     "helmet": "^3.21.2",
+    "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.0.0"
   },
   "devDependencies": {
