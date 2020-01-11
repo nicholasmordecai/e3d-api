@@ -1,17 +1,10 @@
 {
-  "name": "node-scheduler",
+  "name": "e3d-api",
   "version": "0.0.1",
-  "description": "Node scheduler for MySQL",
+  "description": "API to support the E3D Platform",
   "main": "bin/src/index.js",
   "typings": "src/**/*.ts",
-  "keywords": [
-    "schedule",
-    "mysql",
-    "task-manager",
-    "redis",
-    "postgres",
-    "mongodb"
-  ],
+  "keywords": [],
   "author": "Nicholas Mordecai",
   "scripts": {
     "prestart": "tsc",
