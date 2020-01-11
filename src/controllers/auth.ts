@@ -1,6 +1,8 @@
 import * as Express from 'express';
 import { UserModel } from './../models/users';
+import { Unauthorized, Success } from './../utils/respond';
 import { compare } from 'bcrypt';
+
 /**
  * Login
  * 
@@ -13,6 +15,7 @@ export async function Login(request: Express.Request, response: Express.Response
     // check if the correct parameters have been send
     if(!email || !password || typeof(email) !== "string" || typeof(password) !== "string") {
         // respond with server error that incorrect email & password types
+        Unauthorized(response, {error: 'No email or password was passed'});
         return;
     }
 
@@ -20,6 +23,7 @@ export async function Login(request: Express.Request, response: Express.Response
 
     if(!user) {
         // respond with server error as no account has been found
+        Unauthorized(response, {error: 'No user account matched with that username and password'});
         return;
     }
 
@@ -28,8 +32,10 @@ export async function Login(request: Express.Request, response: Express.Response
         if(match) {
             // let token = Auth.generateToken(user.id);
             // respond with token & login login attempt
+            Success(response, {login: true, token: ''});
         } else {
-            // respond with login error
+            // respond with login error - make this the same error as above so it is indistinguishable between a wrong email and a wrong password
+            Unauthorized(response, {error: 'No user account matched with that username and password'});
         }
     });
 }
