@@ -1,4 +1,5 @@
 import { createPool, Pool, PoolConnection, FieldPacket, QueryError } from 'mysql2/promise';
+import { Config } from './../utils/config';
 let connectionPool: Pool;
 
 export class MySQL {
@@ -6,11 +7,11 @@ export class MySQL {
     public static async getUserPool(): Promise<PoolConnection> {
         if (!connectionPool) {
             connectionPool = createPool({
-                host: process.env.MYSQL_DB_HOST,
-                user: process.env.MYSQL_DB_USER,
-                password: process.env.MYSQL_DB_PASSWORD,
-                database: process.env.MYSQL_DB_DATABASE,
-                port: parseInt(process.env.MYSQL_DB_PORT),
+                host: Config.options.mysqlHost,
+                user: Config.options.mysqlUser,
+                password: Config.options.mysqlPassword,
+                database: Config.options.mysqlDatabase,
+                port: Config.options.mysqlPort,
                 multipleStatements: false,
             });
         }

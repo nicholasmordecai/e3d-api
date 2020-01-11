@@ -1,23 +1,30 @@
-import { ISchedulerOptions } from "../system/scheduler";
-
 interface IConfigExample {
     env: string;
     required: boolean;
     type: string;
 }
+
+export interface IOptions {
+    mysqlHost?: string;
+    mysqlUser?: string;
+    mysqlPassword?: string;
+    mysqlDatabase?: string;
+    mysqlPort?: number;
+}
+
 export class Config {
+    public static options: IOptions;
+
     private static readonly emptyConfig: { [key: string]: IConfigExample } = {
-        jobRunTime: { env: 'NS_RUN_CRON', required: true, type: 'string' },
-        resetJobTime: { env: 'NS_RERUN_CRON', required: true, type: 'string' },
-        mysql: { env: 'NS_USE_MYSQL', required: false, type: 'boolean' },
-        redis: { env: 'NS_USE_REDIS', required: false, type: 'boolean' },
-        postgres: { env: 'NS_USE_POSTGRES', required: false, type: 'boolean' },
-        mongodb: { env: 'NS_USE_MONGO', required: false, type: 'boolean' },
-        maxConcurrentJobs: { env: 'NS_MAX_JOBS', required: false, type: 'number' },
+        mysqlHost: { env: 'MYSQL_DB_HOST', required: true, type: 'string' },
+        mysqlUser: { env: 'MYSQL_DB_USER', required: true, type: 'string' },
+        mysqlPassword: { env: 'MYSQL_DB_PASSWORD', required: true, type: 'string' },
+        mysqlDatabase: { env: 'MYSQL_DB_DATABASE', required: true, type: 'string' },
+        mysqlPort: { env: 'MYSQL_DB_PORT', required: true, type: 'number' },
     }
 
-    public static matchConfigToEnvVars(config: ISchedulerOptions): ISchedulerOptions {
-        const confirmedConfig: ISchedulerOptions = {};
+    public static initalise(config: IOptions): IOptions {
+        const confirmedConfig: IOptions = {};
         let throwError: boolean = false;
         let errorString: string = '';
 
@@ -62,6 +69,8 @@ export class Config {
         if (throwError === true) {
             throw errorString;
         }
+
+        Config.options = confirmedConfig;
 
         return confirmedConfig;
     }
