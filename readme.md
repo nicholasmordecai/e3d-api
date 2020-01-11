@@ -9,8 +9,8 @@ $ npm install
 ## Usage
 
 ### Local Envs
-> Create a .env file in the root of the directory and pase the following
-> note: You need to put the values of your own local database here
+> Create a .env file in the root of the directory and pase the following.
+> You need to put the values of your own local database here
 
 ```
 MYSQL_DB_HOST=http://localhost
