@@ -37,8 +37,26 @@ export async function login(request: Express.Request, response: Express.Response
             if(match) {
                 // generate a token to be stored in the database
                 const token = v4();
-                const updated = await TokenModel.insertOne(TokenTypes.refreshToken, user.id, token);
-                if(updated){
+                const existingToken = await TokenModel.findOneByID(user.id, TokenTypes.refreshToken);
+
+                let successful: boolean = null;
+                if(existingToken == null) {
+                    const inserted = await TokenModel.insertOne(TokenTypes.refreshToken, user.id, token);
+                    if(inserted == null) {
+                        successful = false;
+                    } else {
+                        successful = true;
+                    }
+                } else {
+                    const updated = await TokenModel.updateTokenValue(user.id, token, TokenTypes.refreshToken);
+                    if(updated == null) {
+                        successful = false;
+                    } else {
+                        successful = true;
+                    }
+                }
+                
+                if(successful){
                     Success(response, {success: true, refreshToken: token});
                 } else {
                     InternalServerError(response, {error: 'Error while generating refresh token'});
@@ -73,6 +91,10 @@ export async function createAccount(request: Express.Request, response: Express.
         }
 
         const hashedPassword = hash(password, 10, async (error, hash) => {
+            if(error) {
+                InternalServerError(response, {success: false, reason: 'Error when trying to hash the password'});
+                return;
+            }
             const newAccount = await UserModel.insertOne(email, hash, firstname, lastname);
 
             if(newAccount) {
@@ -82,7 +104,7 @@ export async function createAccount(request: Express.Request, response: Express.
             }
         });
     } catch (error) {
-        console.log(error);
+        InternalServerError(response, {success: false, reason: 'Error when trying to create an account', error: error});
     }
 }
 
@@ -120,8 +142,4 @@ export function generateAccessToken(id: number, email: string) {
         throw err;
     }
     return token;
-}
-
-export function generateRefreshToken() {
-
 }

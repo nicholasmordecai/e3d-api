@@ -15,9 +15,9 @@ export interface Token {
 };
 
 export class TokenModel {
-    public static async findOneByID(id: number): Promise<Token | null> {
-        const query = 'SELECT * FROM users WHERE id = ? LIMIT 1';
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [id]);
+    public static async findOneByID(user_id: number, tokenType: number): Promise<Token | null> {
+        const query = 'SELECT * FROM tokens WHERE user_id = ? AND token_type = ? LIMIT 1';
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [user_id, tokenType]);
         if(result[0] != null) {
             return result[0][0];
         } else {
@@ -33,6 +33,21 @@ export class TokenModel {
             (?, ?, ?);
         `;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [tokenType, userId, token]);
+        if(result[0] != null) {
+            return result[0];
+        } else {
+            return null;
+        }
+    }
+
+    public static async updateTokenValue(userId: number, token: string, tokenType: number) {
+        const query = `
+            UPDATE tokens
+            SET token = ?
+            WHERE user_id = ?
+            AND token_type = ?;
+        `;
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [token, userId, tokenType]);
         if(result[0] != null) {
             return result[0];
         } else {
