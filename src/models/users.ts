@@ -1,7 +1,7 @@
 import {FieldPacket, QueryError} from 'mysql2';
 import { MySQL } from './../system/mysql';
 
-export interface User {
+export interface IUser {
     id: number;
     firstname?: string;
     lastname?: string;
@@ -14,7 +14,7 @@ export interface User {
 }
 
 export class UserModel {
-    public static async findOneByID(id: number): Promise<User | null> {
+    public static async findOneByID(id: number): Promise<IUser | null> {
         const query = 'SELECT * FROM users WHERE id = ? LIMIT 1';
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [id]);
         if(result[0] != null) {
@@ -24,7 +24,7 @@ export class UserModel {
         }
     }
 
-    public static async findOneByEmail(email: string): Promise<User | null> {
+    public static async findOneByEmail(email: string): Promise<IUser | null> {
         const query = 'SELECT * FROM users WHERE email = ? LIMIT 1';
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [email]);
         if(result[0] != null) {
@@ -34,7 +34,7 @@ export class UserModel {
         }
     }
 
-    public static async findOneByRefreshToken(refreshToken: string): Promise<User | null> {
+    public static async findOneByRefreshToken(refreshToken: string): Promise<IUser | null> {
         const query = `
             SELECT * FROM users
             LEFT JOIN tokens
@@ -49,13 +49,28 @@ export class UserModel {
         }
     }
 
-    public static async updateRefreshToken(id: number, token: string): Promise<[any, FieldPacket[]] | QueryError> {
-        const query = 'UPDATE users set refresh_token = ? WHERE id = ?';
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [token, id]);
+    public static async insertOne(email: string, password: string, firstname: string = '', lastname: string = ''): Promise<IUser | null> {
+        const query = `
+            INSERT INTO users
+            (firstname, lastname, email, password)
+            VALUES
+            (?, ?, ?, ?);
+        `;
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [firstname, lastname, email, password]);
         if(result[0] != null) {
             return result[0];
         } else {
             return null;
         }
+    }
+
+    public static async updatePassword() {
+        // const query = 'UPDATE users set refresh_token = ? WHERE id = ?';
+        // const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [token, id]);
+        // if(result[0] != null) {
+        //     return result[0];
+        // } else {
+        //     return null;
+        // }
     }
 }

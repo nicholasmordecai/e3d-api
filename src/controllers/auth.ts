@@ -2,7 +2,7 @@ import * as Express from 'express';
 import { UserModel } from './../models/users';
 import { TokenModel, TokenTypes } from './../models/tokens';
 import { BadRequest, Unauthorized, Success, InternalServerError } from './../utils/respond';
-import { compare, hash, compareSync } from 'bcrypt';
+import { compare, hash, compareSync, hashSync } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { Config } from './../utils/config';
 import { v4 } from 'uuid';
@@ -50,6 +50,38 @@ export async function login(request: Express.Request, response: Express.Response
     } catch (dbError) {
         InternalServerError(response, dbError);
         throw dbError;
+    }
+}
+
+export async function createAccount(request: Express.Request, response: Express.Response) {
+    const email = request.body.email;
+    const password = request.body.password;
+    const firstname = request.body.firstname;
+    const lastname = request.body.lastname;
+
+    if(!email || !password) {
+        BadRequest(response, {success: false, reason: 'No email or password was provided'});
+    }
+
+    try {
+        const existingUser = await UserModel.findOneByEmail(email);
+
+        if(existingUser != null) {
+            BadRequest(response, {success: false, reason: 'Email address already registered'});
+            return;
+        }
+
+        const hash = hashSync(password, 10);
+
+        const newAccount = await UserModel.insertOne(email, hash, firstname, lastname);
+
+        if(newAccount) {
+            Success(response, {success: true});
+        } else {
+            InternalServerError(response, {success: false, error: newAccount});
+        }
+    } catch (error) {
+        console.log(error);
     }
 }
 
