@@ -1,6 +1,6 @@
 import * as Express from 'express';
-import { UserModel } from './../models/users';
-import { TokenModel, TokenTypes } from './../models/tokens';
+import { Users } from './../models/users';
+import { Tokens, TokenTypes } from './../models/tokens';
 import { BadRequest, Unauthorized, Success, InternalServerError } from './../utils/respond';
 import { compare, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
@@ -24,7 +24,7 @@ export async function login(request: Express.Request, response: Express.Response
     }
 
     try {
-        const user = await UserModel.findOneByEmail(email);
+        const user = await Users.findOneByEmail(email);
 
         if(!user) {
             // respond with server error as no account has been found
@@ -37,18 +37,18 @@ export async function login(request: Express.Request, response: Express.Response
             if(match) {
                 // generate a token to be stored in the database
                 const token = v4();
-                const existingToken = await TokenModel.findOneByID(user.id, TokenTypes.refreshToken);
+                const existingToken = await Tokens.findOneByID(user.id, TokenTypes.refreshToken);
 
                 let successful: boolean = null;
                 if(existingToken == null) {
-                    const inserted = await TokenModel.insertOne(TokenTypes.refreshToken, user.id, token);
+                    const inserted = await Tokens.insertOne(TokenTypes.refreshToken, user.id, token);
                     if(inserted == null) {
                         successful = false;
                     } else {
                         successful = true;
                     }
                 } else {
-                    const updated = await TokenModel.updateTokenValue(user.id, token, TokenTypes.refreshToken);
+                    const updated = await Tokens.updateTokenValue(user.id, token, TokenTypes.refreshToken);
                     if(updated == null) {
                         successful = false;
                     } else {
@@ -83,7 +83,7 @@ export async function createAccount(request: Express.Request, response: Express.
     }
 
     try {
-        const existingUser = await UserModel.findOneByEmail(email);
+        const existingUser = await Users.findOneByEmail(email);
 
         if(existingUser != null) {
             BadRequest(response, {success: false, reason: 'Email address already registered'});
@@ -95,7 +95,7 @@ export async function createAccount(request: Express.Request, response: Express.
                 InternalServerError(response, {success: false, reason: 'Error when trying to hash the password'});
                 return;
             }
-            const newAccount = await UserModel.insertOne(email, hash, firstname, lastname);
+            const newAccount = await Users.insertOne(email, hash, firstname, lastname);
 
             if(newAccount) {
                 Success(response, {success: true});
@@ -116,7 +116,7 @@ export async function getAccessToken(request: Express.Request, response: Express
         return;
     }
 
-    const user = await UserModel.findOneByRefreshToken(refreshToken);
+    const user = await Users.findOneByRefreshToken(refreshToken);
     if(user) {
         const token = generateAccessToken(user.id, user.email);
         Success(response, {success: true, accessToken: token});

@@ -11,7 +11,8 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `tokens` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -21,4 +22,64 @@ CREATE TABLE `tokens` (
   `expiration_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `objects` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_object_id` int(11) unsigned DEFAULT NULL,
+  `user_id` int(11) unsigned NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `version` varchar(12) NOT NULL DEFAULT '1.0.0',
+  `active` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `description` longtext NOT NULL,
+  `likes` int(11) NOT NULL DEFAULT '0',
+  `favourites` int(11) unsigned NOT NULL DEFAULT '0',
+  `followers` int(11) unsigned NOT NULL DEFAULT '0',
+  `builds` int(11) unsigned NOT NULL DEFAULT '0',
+  `src_url` varchar(255) NOT NULL DEFAULT '',
+  `views` int(15) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `likes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `object_id` int(11) unsigned NOT NULL,
+  `user_id` int(11) unsigned NOT NULL,
+  `liked` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `favourites` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `object_id` int(11) unsigned NOT NULL,
+  `favourited` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `collections` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `visibility` tinyint(2) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `collection_objects` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `collection_id` int(11) unsigned NOT NULL,
+  `user_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `object_id` int(11) unsigned NOT NULL,
+  `comment` mediumtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -13,7 +13,7 @@ export interface IUser {
     level: number;
 }
 
-export class UserModel {
+export class Users {
     public static async findOneByID(id: number): Promise<IUser | null> {
         const query = 'SELECT * FROM users WHERE id = ? LIMIT 1';
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [id]);

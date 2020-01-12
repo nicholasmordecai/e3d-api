@@ -14,7 +14,7 @@ export interface Token {
     expiration_date: string;
 };
 
-export class TokenModel {
+export class Tokens {
     public static async findOneByID(user_id: number, tokenType: number): Promise<Token | null> {
         const query = 'SELECT * FROM tokens WHERE user_id = ? AND token_type = ? LIMIT 1';
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [user_id, tokenType]);
