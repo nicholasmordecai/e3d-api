@@ -1,5 +1,5 @@
 import { BaseRoute } from '../../system/baseRoute';
-import { Login } from './../../controllers/auth';
+import { login, getAccessToken } from './../../controllers/auth';
 
 export class AuthRoute extends BaseRoute {
     
@@ -9,7 +9,7 @@ export class AuthRoute extends BaseRoute {
     }
 
     private registerRoutes() {
-        this.GET('/login', Login);
-        this.POST('/login', Login);
+        this.POST('/login', login);
+        this.POST('/get-access-token', getAccessToken);
     }
 }
