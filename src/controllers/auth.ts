@@ -2,7 +2,7 @@ import * as Express from 'express';
 import { UserModel } from './../models/users';
 import { TokenModel, TokenTypes } from './../models/tokens';
 import { BadRequest, Unauthorized, Success, InternalServerError } from './../utils/respond';
-import { compare, hash, compareSync, hashSync } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { Config } from './../utils/config';
 import { v4 } from 'uuid';
@@ -33,20 +33,21 @@ export async function login(request: Express.Request, response: Express.Response
         }
     
         // assuming then, that 1 and only 1 account was returned, compare the two passwords and if it's a match, then generate a token.
-        const match = compareSync(password, user.password);
-        if(match) {
-            // generate a token to be stored in the database
-            const token = v4();
-            const updated = await TokenModel.insertOne(TokenTypes.refreshToken, user.id, token);
-            if(updated){
-                Success(response, {success: true, refreshToken: token});
+        compare(password, user.password, async (error, match) => {
+            if(match) {
+                // generate a token to be stored in the database
+                const token = v4();
+                const updated = await TokenModel.insertOne(TokenTypes.refreshToken, user.id, token);
+                if(updated){
+                    Success(response, {success: true, refreshToken: token});
+                } else {
+                    InternalServerError(response, {error: 'Error while generating refresh token'});
+                }
             } else {
-                InternalServerError(response, {error: 'Error while generating refresh token'});
+                // respond with login error - make this the same error as above so it is indistinguishable between a wrong email and a wrong password
+                Unauthorized(response, {error: 'No user account matched with that username and password'});
             }
-        } else {
-            // respond with login error - make this the same error as above so it is indistinguishable between a wrong email and a wrong password
-            Unauthorized(response, {error: 'No user account matched with that username and password'});
-        }
+        });
     } catch (dbError) {
         InternalServerError(response, dbError);
         throw dbError;
@@ -71,15 +72,15 @@ export async function createAccount(request: Express.Request, response: Express.
             return;
         }
 
-        const hash = hashSync(password, 10);
+        const hashedPassword = hash(password, 10, async (error, hash) => {
+            const newAccount = await UserModel.insertOne(email, hash, firstname, lastname);
 
-        const newAccount = await UserModel.insertOne(email, hash, firstname, lastname);
-
-        if(newAccount) {
-            Success(response, {success: true});
-        } else {
-            InternalServerError(response, {success: false, error: newAccount});
-        }
+            if(newAccount) {
+                Success(response, {success: true});
+            } else {
+                InternalServerError(response, {success: false, error: newAccount});
+            }
+        });
     } catch (error) {
         console.log(error);
     }
