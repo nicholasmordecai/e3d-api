@@ -15,9 +15,9 @@ export interface Token {
 };
 
 export class Tokens {
-    public static async findOneByID(user_id: number, tokenType: number): Promise<Token | null> {
+    public static async findOneByID(userId: number, tokenType: number): Promise<Token | null> {
         const query = 'SELECT * FROM tokens WHERE user_id = ? AND token_type = ? LIMIT 1';
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [user_id, tokenType]);
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [userId, tokenType]);
         if(result[0] != null) {
             return result[0][0];
         } else {

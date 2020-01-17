@@ -26,4 +26,21 @@ export class Objects {
             return null;
         }
     }
+
+    public static async findFromKeywordSearch(keyword: string) {
+        // TODO the match happens twice.. I'm 99% sure this is super not effecient. Find a better solution
+        const query = `
+            SELECT 
+                id, views, favourites, likes, builds, src_url, MATCH (title,description) AGAINST (?) as score
+            FROM objects 
+            WHERE 
+                MATCH (title,description) AGAINST (?) > 0 
+            ORDER BY score DESC;`;
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [keyword, keyword]);
+        if(result[0] != null) {
+            return result[0];
+        } else {
+            return null;
+        }
+    }
 }

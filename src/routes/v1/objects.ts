@@ -1,5 +1,5 @@
 import { BaseRoute } from '../../system/baseRoute';
-import { createNewObject, getObjectByID} from './../../controllers/objects';
+import { createNewObject, getObjectByID, searchByKeyword} from './../../controllers/objects';
 
 export class ObjectRoute extends BaseRoute {
     
@@ -10,7 +10,7 @@ export class ObjectRoute extends BaseRoute {
 
     private registerRoutes() {
         this.GET('/:id', getObjectByID);
-
-        this.POST('/create', createNewObject)
+        this.POST('/create', createNewObject);
+        this.POST('/search', searchByKeyword);
     }
 }

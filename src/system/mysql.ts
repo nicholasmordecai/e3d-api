@@ -27,7 +27,7 @@ export class MySQL {
             return result;
         } catch (queryError) {
             connection.release();
-            throw new Error(queryError);
+            throw queryError;
         }
     }
 

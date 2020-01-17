@@ -17,8 +17,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@types/bcrypt": "^3.0.0",
-    "@types/jsonwebtoken": "^8.3.5",
     "bcrypt": "^3.0.7",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.4",
@@ -29,6 +27,8 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/jsonwebtoken": "^8.3.5",
     "@sentry/node": "^5.7.1",
     "@sentry/types": "^5.7.1",
     "@types/compression": "^1.0.1",
