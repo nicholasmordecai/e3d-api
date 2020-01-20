@@ -3,9 +3,26 @@ import { Users } from './../models/users';
 import { Tokens, TokenTypes } from './../models/tokens';
 import { BadRequest, Unauthorized, Success, InternalServerError } from './../utils/respond';
 import { compare, hash } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { Config } from './../utils/config';
 import { v4 } from 'uuid';
+
+declare global {
+    namespace Express {
+      interface Request {
+        userId?: number;
+        userEmail?: string;
+      }
+    }
+  }
+
+interface IPayload {
+    cid: number;
+    sub: string;
+    iss: string;
+    iat: number;
+    exp: number;
+}
 
 /**
  * Login
@@ -125,6 +142,11 @@ export async function getAccessToken(request: Express.Request, response: Express
     }
 }
 
+export function decodeAccessToken(token: string): IPayload {
+    const payload: IPayload = verify(token, Config.options.accessTokenSecret) as IPayload;
+    return payload;
+}
+
 export function generateAccessToken(id: number, email: string) {
     // TODO add the iss as part of the config
 
@@ -142,4 +164,25 @@ export function generateAccessToken(id: number, email: string) {
         throw err;
     }
     return token;
+}
+
+export function restrictedRoute(request: Express.Request, response: Express.Response, next: Express.NextFunction) {
+    const token: string = request.headers.authorization as string;
+    
+    if(token === undefined) {
+        return Unauthorized(response);
+    }
+
+    try {
+        const payload = decodeAccessToken(token);
+        request.userId = payload.cid;
+        request.userEmail = payload.sub;
+        return next();
+    } catch (error) {
+        if(error.name === 'TokenExpiredError') {
+            return Unauthorized(response, {reason: 'Access token expired'});
+        } else {
+            return Unauthorized(response, {error: error});
+        }
+    }
 }
