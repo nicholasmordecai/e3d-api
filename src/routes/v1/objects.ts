@@ -1,5 +1,6 @@
 import { BaseRoute } from '../../system/baseRoute';
-import { createNewObject, getObjectByID, searchByKeyword} from './../../controllers/objects';
+import { createNewObject, getObjectByIDForWebView, searchByKeyword} from './../../controllers/objects';
+import { objectLiked } from './../../controllers/likes';
 
 export class ObjectRoute extends BaseRoute {
     
@@ -9,8 +10,9 @@ export class ObjectRoute extends BaseRoute {
     }
 
     private registerRoutes() {
-        this.GET('/:id', getObjectByID);
+        this.GET('/:id', getObjectByIDForWebView);
         this.POST('/create', createNewObject);
         this.POST('/search', searchByKeyword);
+        this.POST('/:id/liked', objectLiked, true);
     }
 }

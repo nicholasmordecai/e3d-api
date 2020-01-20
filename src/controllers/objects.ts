@@ -6,7 +6,7 @@ export async function createNewObject() {
 
 }
 
-export async function getObjectByID(request: Express.Request, response: Express.Response) {
+export async function getObjectByIDForWebView(request: Express.Request, response: Express.Response) {
     const id = parseInt(request.params.id);
 
     if(!id) {
@@ -37,5 +37,4 @@ export async function searchByKeyword(request: Express.Request, response: Expres
     } catch (error) {
         InternalServerError(response, {error: error});
     }
-    
 }
