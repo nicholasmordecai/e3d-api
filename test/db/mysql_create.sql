@@ -39,18 +39,32 @@ CREATE TABLE `objects` (
   `src_url` varchar(255) NOT NULL DEFAULT '',
   `views` int(15) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  FULLTEXT KEY `title` (`title`,`description`),
+  FULLTEXT KEY `description` (`description`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `object_version` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `object_id` int(11) unsigned NOT NULL,
+  `version` varchar(15) NOT NULL DEFAULT '0.0.1',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `version_src_url` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 CREATE TABLE `likes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `object_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
-  `liked` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `liked` bigint(36) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `favourites` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -73,6 +87,7 @@ CREATE TABLE `collection_objects` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `collection_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
+  `object_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -81,5 +96,7 @@ CREATE TABLE `comments` (
   `user_id` int(11) unsigned NOT NULL,
   `object_id` int(11) unsigned NOT NULL,
   `comment` mediumtext NOT NULL,
+  `commented` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

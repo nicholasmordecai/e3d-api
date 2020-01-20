@@ -1,6 +1,5 @@
 import {FieldPacket, QueryError} from 'mysql2';
 import { MySQL } from '../system/mysql';
-import { Likes } from './likes';
 
 export interface IObject {
     id: number;
