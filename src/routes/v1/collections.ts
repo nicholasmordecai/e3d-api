@@ -1,5 +1,5 @@
 import { BaseRoute } from '../../system/baseRoute';
-import { login, getAccessToken, createAccount } from './../../controllers/auth';
+// import { login, getAccessToken, createAccount } from './../../controllers/auth';
 
 export class CollectionsRoute extends BaseRoute {
     
@@ -9,6 +9,6 @@ export class CollectionsRoute extends BaseRoute {
     }
 
     private registerRoutes() {
-        this.GET('/get/:id', login);
+
     }
 }

@@ -19,7 +19,6 @@ MYSQL_DB_PASSWORD=password
 MYSQL_DB_DATABASE=database
 MYSQL_DB_PORT=3306
 JWT_ACCESS_SECRET=abcdefg
-
 ```
 
 ###  To run locally
@@ -52,3 +51,12 @@ $ npm run dev
 $ npm test
 ```
 
+# Performance
+> Performance is a big must for this project. You can test the performance on your local machine by doing the following
+
+``` sh
+$ npm install -g autocannon
+$ autocannon http://localhost:5454/api/v1/auth/login
+```
+
+At the time of writing this, the login route (that currently does nothing other than respond 200 ok) is getting beterrn 175k and 190k requests in the 10 seconds of testing with 10 concurrent connections.
