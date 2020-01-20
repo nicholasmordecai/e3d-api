@@ -71,10 +71,10 @@ export class Likes {
     }
 
     public static async countLikes(objectId: number): Promise<number> {
-        const query = 'SELECT COUNT(*) FROM likes WHERE object_id = ?;';
+        const query = 'SELECT COUNT(*) as count FROM likes WHERE object_id = ?;';
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [objectId]);
         if(result[0] != null) {
-            return result[0][0];
+            return result[0][0].count;
         } else {
             return null;
         }

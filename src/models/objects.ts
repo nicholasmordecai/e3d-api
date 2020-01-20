@@ -58,8 +58,7 @@ export class Objects {
     public static async updateObjectLikeCounter(id: number, count: number): Promise<boolean> {
         const query = `UPDATE objects SET likes = ? WHERE id = ?`;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [count, id]);
-        console.log(result[0]);
-        if (result[0].insertId != null) {
+        if (result[0].changedRows === 1) {
             return true;
         } else {
             return false;   
