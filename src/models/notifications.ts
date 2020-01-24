@@ -38,9 +38,9 @@ export class Notifications {
         return recordUpdatedCorrectly(result);
     }
 
-    public static async markAsSeen(notificationId: number) {
-        const query = 'UPDATE notifications SET seen_at = UNIX_TIMESTAMP() * 1000 WHERE id = ?';
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [notificationId]);
+    public static async markAsSeen(notificationId: number, notifierId: number): Promise<boolean | null> {
+        const query = 'UPDATE notifications SET seen_at = UNIX_TIMESTAMP() * 1000 WHERE id = ? AND notifier_id = ?';
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [notificationId, notifierId]);
         return recordUpdatedCorrectly(result);
     }
 }
