@@ -5,7 +5,7 @@ import { Likes } from './../models/likes';
 import { restrictedRoute } from './auth';
 import { BadRequest, NotFound, Success, InternalServerError, Unauthorized } from '../utils/respond';
 
-export async function objectLiked(request: Express.Request, response: Express.Response) {
+export async function objectLiked(request: Express.Request, response: Express.Response): Promise<void> {
     const objectId: number = parseInt(request.params.id);
     const exists = await Likes.alreadyExists(objectId, request.userId);
 
