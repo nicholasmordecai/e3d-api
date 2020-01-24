@@ -32,6 +32,7 @@ interface IPayload {
 export async function login(request: Express.Request, response: Express.Response) {
     const email = request.body.email;
     const password = request.body.password;
+    const keepMeSignedIn = request.body.keepMeSignedIn;
 
     // check if the correct parameters have been send
     if(!email || !password || typeof(email) !== "string" || typeof(password) !== "string") {
@@ -74,7 +75,13 @@ export async function login(request: Express.Request, response: Express.Response
                 }
                 
                 if(successful){
-                    Success(response, {success: true, refreshToken: token});
+                    if(keepMeSignedIn != null && keepMeSignedIn === true) {
+                        Success(response, {success: true, refreshToken: token});
+                    } else {
+                        const accessToken = generateAccessToken(user.id, user.email);
+                        Success(response, {success: true, accessToken: accessToken});
+                    }
+                    
                 } else {
                     InternalServerError(response, {error: 'Error while generating refresh token'});
                 }
