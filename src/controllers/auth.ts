@@ -83,7 +83,7 @@ export async function login(request: Express.Request, response: Express.Response
                     }
                     
                 } else {
-                    InternalServerError(response, {error: 'Error while generating refresh token'});
+                    InternalServerError(response, {error: 'Error while signing you in'});
                 }
             } else {
                 // respond with login error - make this the same error as above so it is indistinguishable between a wrong email and a wrong password

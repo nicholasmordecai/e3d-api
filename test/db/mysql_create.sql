@@ -100,3 +100,28 @@ CREATE TABLE `comments` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `notifications` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `notification_name` varchar(45) NOT NULL,
+  `seen_at` bigint(36) DEFAULT NULL,
+  `created_at` bigint(36) NOT NULL,
+  `reference_table` varchar(45) NOT NULL,
+  `reference_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `tag` varchar(45) NOT NULL,
+  `created_at` bigint(36) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `object_tag` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `object_id` int(11) NOT NULL,
+  `tag_id` int(11) unsigned NOT NULL,
+  `tagged_at` bigint(36) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
