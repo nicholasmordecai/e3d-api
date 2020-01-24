@@ -8,6 +8,14 @@ export function recordInsertedCorrectly(result: [any, FieldPacket[]] | QueryErro
     }
 }
 
+export function recordUpdatedCorrectly(result: [any, FieldPacket[]] | QueryError): boolean {
+    if (result[0].affectedRows != null) {
+        return true;
+    } else {
+        return false;   
+    }
+}
+
 export function recordDeletedCorrectly(result: [any, FieldPacket[]] | QueryError): boolean {
     if (result[0].affectedRows >= 1) {
         return true;

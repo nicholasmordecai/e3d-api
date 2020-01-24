@@ -1,9 +1,8 @@
 import * as Express from 'express';
-import { decodeAccessToken } from './auth';
 import { Objects } from '../models/objects';
 import { Likes } from './../models/likes';
-import { restrictedRoute } from './auth';
-import { BadRequest, NotFound, Success, InternalServerError, Unauthorized } from '../utils/respond';
+import { BadRequest, Success, InternalServerError } from '../utils/respond';
+import { Notification, createNotification } from './notifications';
 
 export async function objectLiked(request: Express.Request, response: Express.Response): Promise<void> {
     const objectId: number = parseInt(request.params.id);
@@ -13,9 +12,17 @@ export async function objectLiked(request: Express.Request, response: Express.Re
         return BadRequest(response, {reason: 'User has already liked this object'});
     }
 
+    const result = await Likes.insert(objectId, request.userId);
+
+    // update the local like counter on the object table
     recalculateObjectsLikeCount(objectId);
 
-    const result = await Likes.insert(objectId, request.userId);
+    // create a user notification for this
+    const object = await Objects.findOneByID(objectId);
+    if(object != null) {
+        createNotification(request.userId, object.user_id, objectId, Notification.objectLiked);
+    }
+
     if(result) {
         return Success(response, {success: true});
     } else {

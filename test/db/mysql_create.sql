@@ -103,13 +103,14 @@ CREATE TABLE `comments` (
 CREATE TABLE `notifications` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
-  `notification_name` varchar(45) NOT NULL,
+  `action` tinyint(4) NOT NULL,
+  `reference_id` int(11) NOT NULL,
   `seen_at` bigint(36) DEFAULT NULL,
   `created_at` bigint(36) NOT NULL,
-  `reference_table` varchar(45) NOT NULL,
-  `reference_id` int(11) NOT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
