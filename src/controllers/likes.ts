@@ -1,11 +1,17 @@
 import * as Express from 'express';
 import { Objects } from '../models/objects';
 import { Likes } from './../models/likes';
-import { BadRequest, Success, InternalServerError } from '../utils/respond';
+import { BadRequest, Success, InternalServerError, NotFound } from '../utils/respond';
 import { Notification, createNotification } from './notifications';
 
 export async function objectLiked(request: Express.Request, response: Express.Response): Promise<void> {
     const objectId: number = parseInt(request.params.id);
+    const object = await Objects.findOneByID(objectId);
+
+    if(!object == null) {
+        return NotFound(response, `Object ${objectId} was not found`);
+    } 
+
     const exists = await Likes.alreadyExists(objectId, request.userId);
 
     if(exists) {
@@ -18,7 +24,7 @@ export async function objectLiked(request: Express.Request, response: Express.Re
     recalculateObjectsLikeCount(objectId);
 
     // create a user notification for this
-    const object = await Objects.findOneByID(objectId);
+    
     if(object != null) {
         createNotification(request.userId, object.user_id, objectId, Notification.objectLiked);
     }

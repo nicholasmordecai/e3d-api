@@ -14,4 +14,3 @@ export class V1Routes {
         return router;
     }
 }
-

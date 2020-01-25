@@ -114,7 +114,7 @@ export async function createAccount(request: Express.Request, response: Express.
             return;
         }
 
-        const hashedPassword = hash(password, 10, async (error, hash) => {
+        hash(password, 10, async (error, hash) => {
             if(error) {
                 InternalServerError(response, {success: false, reason: 'Error when trying to hash the password'});
                 return;
