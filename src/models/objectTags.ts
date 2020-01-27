@@ -17,7 +17,17 @@ export class ObjectTags {
     }
 
     public static async getTagsByObjectId(objectId: number) : Promise<IObjectTag[] | null> {
-        const query = 'SELECT * FROM object_tag WHERE object_id = ?';
+        const query = `
+        SELECT 
+            tags.id,
+            tags.tag,
+            tags.created_at,
+            object_tag.id AS reference_id
+        FROM object_tag 
+        LEFT JOIN tags
+            ON object_tag.tag_id = tags.id
+        WHERE object_id = ?
+        `;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [objectId]);
         return returnAll(result);
     }
