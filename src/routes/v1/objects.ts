@@ -1,5 +1,6 @@
 import { BaseRoute } from '../../system/baseRoute';
-import { createNewObject, getObjectByIDForWebView, searchByKeyword} from './../../controllers/objects';
+import { createNewObject, getObjectByIDForWebView} from './../../controllers/objects';
+import { searchByKeyword } from './../../controllers/search';
 import { objectLiked, getAllObjectLikes, totalCountOfLikesByObjectId } from './../../controllers/likes';
 
 export class ObjectRoute extends BaseRoute {
