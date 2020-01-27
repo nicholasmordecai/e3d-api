@@ -34,6 +34,7 @@ export function returnSingle<T>(result: [any, FieldPacket[]] | QueryError): T | 
 
 export function returnAll<T>(result: [any, FieldPacket[]] | QueryError): Array<T> | null {
     if(result[0] != null) {
+        console.log(result[0]);
         return result[0];
     } else {
         return null;

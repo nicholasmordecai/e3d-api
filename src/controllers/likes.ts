@@ -49,3 +49,37 @@ export async function recalculateObjectsLikeCount(id: number): Promise<void> {
 
     Objects.updateObjectLikeCounter(id, likes);
 }
+
+export async function getAllObjectLikes(request: Express.Request, response: Express.Response): Promise<void> {
+    const objectId: number = parseInt(request.params.id);
+
+    if(!objectId) {
+        BadRequest(response);
+    }
+
+    //TODO check if the object exists, if not - return 404
+
+    const likes = await Likes.findAllByObjectId(objectId);
+    if(!likes) {
+        InternalServerError(response, 'Unknown - 548');
+    } else {
+        Success(response, likes);
+    }
+}
+
+export async function totalCountOfLikesByObjectId(request: Express.Request, response: Express.Response): Promise<void> {
+    const objectId: number = parseInt(request.params.id);
+
+    if(!objectId) {
+        BadRequest(response);
+    }
+
+    //TODO check if the object exists, if not - return 404
+
+    const likes = await Likes.countLikes(objectId);
+    if(!likes) {
+        InternalServerError(response, 'Unknown - 548');
+    } else {
+        Success(response, likes);
+    }
+}
