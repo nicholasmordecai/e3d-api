@@ -17,6 +17,17 @@ export interface IObject {
     src_url: number;
 };
 
+interface IKeywordSearchResult {
+    id: number;
+    views: number;
+    favourites: number;
+    likes: number;
+    builds: number;
+    source_url: string;
+    match: number;
+    tags? 
+}
+
 export class Objects {
     public static async findOneByID(id: number): Promise<IObject | null> {
         /**
@@ -34,16 +45,18 @@ export class Objects {
         return returnSingle(result);
     }
 
-    public static async findFromKeywordSearch(keyword: string) {
+    public static async findFromKeywordSearch(keyword: string, limit: number = 20): Promise<IKeywordSearchResult[] | null> {
         // TODO the match happens twice.. I'm 99% sure this is super not effecient. Find a better solution
         const query = `
             SELECT 
-                id, views, favourites, likes, builds, src_url, MATCH (title,description) AGAINST (?) as score
+                id, views, favourites, likes, builds, src_url, MATCH (title) AGAINST (?) as score
             FROM objects 
             WHERE 
-                MATCH (title,description) AGAINST (?) > 0 
-            ORDER BY score DESC;`;
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [keyword, keyword]);
+                MATCH (title) AGAINST (?) > 0 
+            ORDER BY score DESC
+            LIMIT ?;`;
+
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [keyword, keyword, limit]);
         return returnAll(result);
     }
 
