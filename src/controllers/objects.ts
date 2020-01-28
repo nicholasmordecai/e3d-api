@@ -22,19 +22,3 @@ export async function getObjectByIDForWebView(request: Express.Request, response
         Success(response, object);
     }
 }
-
-export async function searchByKeyword(request: Express.Request, response: Express.Response) {
-    const keyword = request.body.keyword;
-
-    if(!keyword) {
-        BadRequest(response, {reason: 'No search term was passed'});
-        return;
-    }
-
-    try {
-        const result = await Objects.findFromKeywordSearch(keyword);
-        Success(response, {result: result});
-    } catch (error) {
-        InternalServerError(response, {error: error});
-    }
-}

@@ -1,6 +1,6 @@
 import {FieldPacket, QueryError} from 'mysql2';
 import { MySQL } from '../system/mysql';
-import { Likes } from './likes';
+import { returnSingle, returnAll, recordUpdatedCorrectly } from '../utils/dbUtils';
 
 export interface IObject {
     id: number;
@@ -17,6 +17,17 @@ export interface IObject {
     src_url: number;
 };
 
+interface IKeywordSearchResult {
+    id: number;
+    views: number;
+    favourites: number;
+    likes: number;
+    builds: number;
+    source_url: string;
+    match: number;
+    tags? 
+}
+
 export class Objects {
     public static async findOneByID(id: number): Promise<IObject | null> {
         /**
@@ -25,43 +36,33 @@ export class Objects {
          * This isn't a big enough deal to bother worrying about. Speed is more important here.
          */
         const query1: string = `SELECT * FROM objects WHERE ID = ? LIMIT 1`;
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.executeTransaction(query1, [id]);
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query1, [id]);
 
         const query2: string = `UPDATE objects SET views = views + 1 WHERE id = ?;`;
         // execute this in a non async callback as it's not needed to return the results - keep it speedy
         MySQL.execute(query2, [id]);
 
-        if(result[0] != null) {
-            return result[0][0];
-        } else {
-            return null;
-        }
+        return returnSingle(result);
     }
 
-    public static async findFromKeywordSearch(keyword: string) {
+    public static async findFromKeywordSearch(keyword: string, limit: number = 20): Promise<IKeywordSearchResult[] | null> {
         // TODO the match happens twice.. I'm 99% sure this is super not effecient. Find a better solution
         const query = `
             SELECT 
-                id, views, favourites, likes, builds, src_url, MATCH (title,description) AGAINST (?) as score
+                id, views, favourites, likes, builds, src_url, MATCH (title) AGAINST (?) as score
             FROM objects 
             WHERE 
-                MATCH (title,description) AGAINST (?) > 0 
-            ORDER BY score DESC;`;
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [keyword, keyword]);
-        if(result[0] != null) {
-            return result[0];
-        } else {
-            return null;
-        }
+                MATCH (title) AGAINST (?) > 0 
+            ORDER BY score DESC
+            LIMIT ?;`;
+
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [keyword, keyword, limit]);
+        return returnAll(result);
     }
 
     public static async updateObjectLikeCounter(id: number, count: number): Promise<boolean> {
         const query = `UPDATE objects SET likes = ? WHERE id = ?`;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [count, id]);
-        if (result[0].changedRows === 1) {
-            return true;
-        } else {
-            return false;   
-        }
+        return recordUpdatedCorrectly(result);
     }
 }

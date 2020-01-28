@@ -32,6 +32,7 @@ interface IPayload {
 export async function login(request: Express.Request, response: Express.Response) {
     const email = request.body.email;
     const password = request.body.password;
+    const keepMeSignedIn = request.body.keepMeSignedIn;
 
     // check if the correct parameters have been send
     if (!email || !password || typeof (email) !== "string" || typeof (password) !== "string") {
@@ -72,11 +73,17 @@ export async function login(request: Express.Request, response: Express.Response
                         successful = true;
                     }
                 }
-
-                if (successful) {
-                    Success(response, { success: true, refreshToken: token });
+                
+                if(successful){
+                    if(keepMeSignedIn != null && keepMeSignedIn === true) {
+                        Success(response, {success: true, refreshToken: token});
+                    } else {
+                        const accessToken = generateAccessToken(user.id, user.email);
+                        Success(response, {success: true, accessToken: accessToken});
+                    }
+                    
                 } else {
-                    InternalServerError(response, { error: 'Error while generating refresh token' });
+                    InternalServerError(response, {error: 'Error while signing you in'});
                 }
             } else {
                 // respond with login error - make this the same error as above so it is indistinguishable between a wrong email and a wrong password
@@ -107,9 +114,9 @@ export async function createAccount(request: Express.Request, response: Express.
             return;
         }
 
-        const hashedPassword = hash(password, 10, async (error, hash) => {
-            if (error) {
-                InternalServerError(response, { success: false, reason: 'Error when trying to hash the password' });
+        hash(password, 10, async (error, hash) => {
+            if(error) {
+                InternalServerError(response, {success: false, reason: 'Error when trying to hash the password'});
                 return;
             }
             const newAccount = await Users.insertOne(email, hash, firstname, lastname);
