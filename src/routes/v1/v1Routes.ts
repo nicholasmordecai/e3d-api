@@ -3,6 +3,7 @@ import { AuthRoute } from './auth';
 import { ObjectRoute } from './objects';
 import { CollectionsRoute } from './collections';
 import { NotificationRoute } from './notifications';
+import { UsersRoute } from './users'
 
 export class V1Routes {
     public static setup() {
@@ -11,6 +12,7 @@ export class V1Routes {
         router.use('/object', new ObjectRoute().expressRouter);
         router.use('/collection', new CollectionsRoute().expressRouter);
         router.use('/notifications', new NotificationRoute().expressRouter);
+        router.use('/user', new UsersRoute().expressRouter);
         return router;
     }
 }

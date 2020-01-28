@@ -45,6 +45,13 @@ export class Objects {
         return returnSingle(result);
     }
 
+    public static async findAllByUserID(userId: number): Promise<IObject[] | null> {
+
+        const query1: string = 'SELECT * FROM objects WHERE user_id = ?';
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query1, [userId])
+        return returnAll(result);
+    }
+
     public static async findFromKeywordSearch(keyword: string, limit: number = 20): Promise<IKeywordSearchResult[] | null> {
         // TODO the match happens twice.. I'm 99% sure this is super not effecient. Find a better solution
         const query = `
