@@ -18,7 +18,7 @@ export async function getUserProfile(request: Express.Request, response: Express
     Success(response, sanitizedUser);
 }
 
-const sanitizeUserData = (user) => {
+const sanitizeUserData = (user: IUser) => {
     return {
         firstname: user.firstname,
         lastname: user.lastname,
@@ -30,25 +30,25 @@ const sanitizeUserData = (user) => {
 export async function getCompleteUserProfile(request: Express.Request, response: Express.Response) {
 
     const user = await Users.findOneByID(request.userId);
-    if (user === undefined) {
+    if (user == null) {
         InternalServerError(response, {error: 'Error while retrieving user'});
         return;
     }
 
     const likes = await Likes.findAllByUserID(request.userId)
-    if (likes === undefined) {
+    if (likes == null) {
         InternalServerError(response, {error: 'Error while retrieving likes'});
         return;
     }
 
     const objects = await Objects.findAllByUserID(request.userId)
-    if (objects === undefined) {
+    if (objects == null) {
         InternalServerError(response, {error: 'Error while retrieving objects'});
         return;
     }
 
     const favourites = await Favourites.findAllByUserID(request.userId);
-    if (favourites === undefined) {
+    if (favourites == null) {
         InternalServerError(response, {error: 'Error while retrieving favourites'});
         return;
     }
