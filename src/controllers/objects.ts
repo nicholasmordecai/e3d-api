@@ -1,6 +1,7 @@
 import * as Express from 'express';
-import { Objects } from '../models/objects';
-import { badRequest, notFound, success } from '../utils/respond';
+import { Objects, IObject } from '../models/objects';
+import { Respond } from '../utils/respond';
+
 
 export async function createNewObject() {
 
@@ -9,16 +10,21 @@ export async function createNewObject() {
 export async function getObjectByIDForWebView(request: Express.Request, response: Express.Response) {
     const id = parseInt(request.params.id);
 
-    if (!id) {
-        badRequest(response, { reason: 'Missing Object ID' });
-        return;
+    if (id == null) {
+        return Respond.Object.noObjectIdPassed(response);
     }
 
-    const object = await Objects.findOneByID(id);
+    let object: IObject;
+
+    try {
+        object = await Objects.findOneByID(id);
+    } catch (error) {
+        return Respond.Object.errorSearchingForObject(response, null, error, id);
+    }
 
     if (!object) {
-        notFound(response);
+        return Respond.notFound(response);
     } else {
-        success(response, object);
+        return Respond.success(response, object);
     }
 }

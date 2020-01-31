@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { unauthorized, internalServerError, badRequest } from './../respond';
+import { unauthorized, internalServerError, badRequest } from '../apiResponds';
 
 
 /**
@@ -42,20 +42,20 @@ export class AuthResponse {
     }
 
 
-    // Auth interneral server errors 1500 - 1599
+    // Auth interneral server errors 1400 - 1499
     public static couldNotSignIn(response:Response, data?: any, error?: any, debug?: any) {
-        internalServerError(response, 1500, 'Unknown error when trying to sign in', data, error, debug);
+        internalServerError(response, 1400, 'Unknown error when trying to sign in', data, error, debug);
     }
 
     public static couldNotHasPassword(response:Response, data?: any, error?: any, debug?: any) {
-        internalServerError(response, 1501, 'Error when hashing password', data, error, debug);
+        internalServerError(response, 1401, 'Error when hashing password', data, error, debug);
     }
 
     public static couldNotInsertNewUser(response:Response, data?: any, error?: any, debug?: any) {
-        internalServerError(response, 1502, 'Error inserting new user into the database', data, error, debug);
+        internalServerError(response, 1402, 'Error inserting new user into the database', data, error, debug);
     }
 
     public static couldNotCreateAccount(response:Response, data?: any, error?: any, debug?: any) {
-        internalServerError(response, 1503, 'Error creating account', data, error, debug);
+        internalServerError(response, 1403, 'Error creating account', data, error, debug);
     }
 }

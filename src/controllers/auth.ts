@@ -4,7 +4,7 @@ import { Tokens, TokenTypes } from './../models/tokens';
 import { compare, hash } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 import { Config } from './../utils/config';
-import { Respond } from '../utils/apiResponse';
+import { Respond } from '../utils/respond';
 import { v4 } from 'uuid';
 
 declare global {

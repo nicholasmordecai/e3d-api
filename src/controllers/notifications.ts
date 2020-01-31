@@ -1,5 +1,5 @@
 import * as Express from 'express';
-import { notFound, success, internalServerError } from '../utils/respond';
+import { notFound, success, internalServerError } from '../utils/apiResponds';
 import { Notifications } from './../models/notifications';
 
 export enum Notification {

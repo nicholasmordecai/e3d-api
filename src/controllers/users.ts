@@ -3,7 +3,7 @@ import { Users, IUser } from './../models/users';
 import { Likes } from './../models/likes';
 import { Favourites } from './../models/favourites';
 import { Objects } from './../models/objects';
-import { success, internalServerError } from './../utils/respond';
+import { success, internalServerError } from '../utils/apiResponds';
 
 export async function getUserProfile(request: Express.Request, response: Express.Response) {
     const user = await Users.findOneByID(request.userId);

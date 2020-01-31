@@ -1,15 +1,21 @@
 import * as Express from 'express';
 import { Objects } from '../models/objects';
 import { Likes } from './../models/likes';
-import { badRequest, success, internalServerError, notFound } from '../utils/respond';
 import { Notification, createNotification } from './notifications';
+import { Respond } from '../utils/respond';
 
 export async function objectLiked(request: Express.Request, response: Express.Response): Promise<void> {
     const objectId: number = parseInt(request.params.id);
-    const object = await Objects.findOneByID(objectId);
+
+    try {
+        const object = await Objects.findOneByID(objectId);
+    } catch (error) {
+        return Respond.Object.
+    }
+    
 
     if (!object == null) {
-        return notFound(response, `Object ${objectId} was not found`);
+        return Respond.notFound(response, null, { objectId: objectId });
     }
 
     const exists = await Likes.alreadyExists(objectId, request.userId);

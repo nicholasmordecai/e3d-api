@@ -1,7 +1,7 @@
 import * as Express from 'express';
 import { Objects } from '../models/objects';
 import { ObjectTags } from './../models/objectTags';
-import { badRequest, success, internalServerError } from '../utils/respond';
+import { badRequest, success, internalServerError } from '../utils/apiResponds';
 
 export async function searchByKeyword(request: Express.Request, response: Express.Response) {
     const keyword = request.body.keyword;
