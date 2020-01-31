@@ -1,7 +1,8 @@
 import {FieldPacket, QueryError} from 'mysql2';
-import { MySQL } from './../system/mysql';
-import { recordInsertedCorrectly, recordUpdatedCorrectly, returnSingle, returnAll} from '../utils/dbUtils';
+import {MySQL} from './../system/mysql';
+import {recordInsertedCorrectly, recordUpdatedCorrectly, returnSingle, returnAll} from '../utils/dbUtils';
 
+/* eslint-enable */
 export interface INotification {
     id: number;
     user_id: number;
@@ -12,6 +13,7 @@ export interface INotification {
     created_at: number;
     deleted: number;
 };
+/* eslint-disable */
 
 export class Notifications {
     public static async createNotification(userId: number, notifierId: number, action: number, referenceId: number): Promise<boolean | null> {

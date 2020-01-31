@@ -1,9 +1,9 @@
-export function uniqueElements<T>(a: Array<T>, b: Array<T>): T[] {
+export function uniqueElements<T>(array1: Array<T>, array2: Array<T>): T[] {
     const unique: T[] = [];
 
-    for(let a1 of a) {
-        if(!b.includes(a1)) {
-            unique.push(a1);
+    for (const element of array1) {
+        if (!array2.includes(element)) {
+            unique.push(element);
         }
     }
 

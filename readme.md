@@ -21,6 +21,27 @@ MYSQL_DB_PORT=3306
 JWT_ACCESS_SECRET=abcdefg
 ```
 
+### Linting
+ESLint is being used for the linting. This used to be tslint, however they migrated both into just eslint with an option for TS support.
+
+You need to make sure if you want the linter to work in VS code, that you have the following plugin install in vscode: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+
+Once that's installed, you'll need to add the eslint to your settings.json file to make sure that problem outputs go through vscode problem tab in the terminal. To do this, use ctrl, shift, p or cmd, shift, p and put the following in the json file:
+
+```
+    ...
+    "eslint.validate":[
+        {  
+            "language":"javascript",
+            "autoFix":true
+        },
+        {  
+            "language":"typescript",
+            "autoFix":true
+        }
+    ]
+```
+
 ###  To run locally
 ``` sh
 $ npm run dev

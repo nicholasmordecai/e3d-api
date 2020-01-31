@@ -1,17 +1,19 @@
 import {FieldPacket, QueryError} from 'mysql2';
-import { MySQL } from './../system/mysql';
-import { recordInsertedCorrectly, returnAll, returnSingle } from '../utils/dbUtils';
+import {MySQL} from './../system/mysql';
+import {recordInsertedCorrectly, returnAll, returnSingle} from '../utils/dbUtils';
 
+/* eslint-disable */
 export interface ITag {
     id: number;
     tag: string;
 };
+/* eslint-enable */
 
 export class Tags {
     public static async findByTagName(tag: string): Promise<ITag | null> {
         const query = 'SELECT * FROM tags WHERE tag = ?;';
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [tag]);
-        if(result[0] != null) {
+        if (result[0] != null) {
             return result[0];
         } else {
             return null;
