@@ -15,14 +15,34 @@ export class AuthResponse {
         unauthorized(response, 1002, 'Users email and or password does not match', data, error, debug);
     }
 
-    // Auth bad requests 1300 - 1399
+    public static refreshTokenInvalid(response:Response, data?: any, error?: any, debug?: any) {
+        unauthorized(response, 1003, 'The refresh token passed is invalid', data, error, debug);
+    }
 
+    public static accessTokenExpired(response:Response, data?: any, error?: any, debug?: any) {
+        unauthorized(response, 1004, 'The access token has expired', data, error, debug);
+    }
+
+    public static accessTokenInvalid(response:Response, data?: any, error?: any, debug?: any) {
+        unauthorized(response, 1005, 'The access token passed is invalid', data, error, debug);
+    }
+
+
+    // Auth bad requests 1300 - 1399
     public static userAlreadyExists(response:Response, data?: any, error?: any, debug?: any) {
         badRequest(response, 1300, 'Email address already exists', data, error, debug);
     }
 
-    // Auth interneral server errors 1500 - 1599
+    public static noRefreshTokenPassed(response:Response, data?: any, error?: any, debug?: any) {
+        badRequest(response, 1301, 'No refresh token was passed', data, error, debug);
+    }
 
+    public static noAccessTokenPassed(response:Response, data?: any, error?: any, debug?: any) {
+        badRequest(response, 1302, 'No access token was present in the header', data, error, debug);
+    }
+
+
+    // Auth interneral server errors 1500 - 1599
     public static couldNotSignIn(response:Response, data?: any, error?: any, debug?: any) {
         internalServerError(response, 1500, 'Unknown error when trying to sign in', data, error, debug);
     }

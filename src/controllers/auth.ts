@@ -72,22 +72,21 @@ export async function login(request: Express.Request, response: Express.Response
 
                 if (successful) {
                     if (keepMeSignedIn != null && keepMeSignedIn === true) {
-                        Respond.success(response, { success: true, refreshToken: token });
+                        return Respond.success(response, { success: true, refreshToken: token });
                     } else {
                         const accessToken = generateAccessToken(user.id, user.email);
-                        Respond.success(response, { success: true, accessToken: accessToken });
+                        return Respond.success(response, { success: true, accessToken: accessToken });
                     }
                 } else {
-                    Respond.Auth.couldNotSignIn(response);
+                    return Respond.Auth.couldNotSignIn(response);
                 }
             } else {
                 // respond with login error - make this the same error as above so it is indistinguishable between a wrong email and a wrong password
-                Respond.Auth.passwordsDoNotMatch(response);
+                return Respond.Auth.passwordsDoNotMatch(response);
             }
         });
     } catch (dbError) {
-        Respond.Auth.couldNotSignIn(response, dbError);
-        throw dbError;
+        return Respond.Auth.couldNotSignIn(response, dbError);
     }
 }
 
@@ -98,15 +97,14 @@ export async function createAccount(request: Express.Request, response: Express.
     const lastname = request.body.lastname;
 
     if (!email || !password) {
-        Respond.Auth.noPasswordOrEmailPassed(response);
+        return Respond.Auth.noPasswordOrEmailPassed(response);
     }
 
     try {
         const existingUser = await Users.findOneByEmail(email);
 
         if (existingUser != null) {
-            Respond.Auth.userAlreadyExists(response);
-            return;
+            return Respond.Auth.userAlreadyExists(response);
         }
 
         hash(password, 10, async (error, hash) => {
@@ -127,7 +125,7 @@ export async function createAccount(request: Express.Request, response: Express.
             }
         });
     } catch (error) {
-        Respond.Auth.couldNotCreateAccount(response, null, error, { email: email });
+        return Respond.Auth.couldNotCreateAccount(response, null, error, { email: email });
     }
 }
 
@@ -135,16 +133,15 @@ export async function getAccessToken(request: Express.Request, response: Express
     const refreshToken = request.body.refreshToken;
 
     if (!refreshToken) {
-        badRequest(response, { success: false, reason: 'No refresh token passed' });
-        return;
+        return Respond.Auth.noRefreshTokenPassed(response);
     }
 
     const user = await Users.findOneByRefreshToken(refreshToken);
     if (user) {
         const token = generateAccessToken(user.id, user.email);
-        success(response, { success: true, accessToken: token });
+        return Respond.success(response, { success: true, accessToken: token });
     } else {
-        unauthorized(response, { success: false, reason: 'Refresh token could not be found' });
+        return Respond.Auth.refreshTokenInvalid(response, null, null, { refreshToken: refreshToken });
     }
 }
 
@@ -153,7 +150,7 @@ export function decodeAccessToken(token: string): IPayload {
     return payload;
 }
 
-export function generateAccessToken(id: number, email: string) {
+export function generateAccessToken(id: number, email: string): string {
     // TODO add the iss as part of the config
 
     const data = {
@@ -175,8 +172,8 @@ export function generateAccessToken(id: number, email: string) {
 export function restrictedRoute(request: Express.Request, response: Express.Response, next: Express.NextFunction) {
     const token: string = request.headers.authorization as string;
 
-    if (token === undefined) {
-        return unauthorized(response);
+    if (token == null) {
+        return Respond.Auth.noAccessTokenPassed(response);
     }
 
     try {
@@ -186,9 +183,9 @@ export function restrictedRoute(request: Express.Request, response: Express.Resp
         return next();
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-            return unauthorized(response, { reason: 'Access token expired' });
+            return Respond.Auth.accessTokenExpired(response, null, null, { accessToken: token });
         } else {
-            return unauthorized(response, { error: error });
+            return Respond.Auth.accessTokenExpired(response, null, error, { accessToken: token });
         }
     }
 }
