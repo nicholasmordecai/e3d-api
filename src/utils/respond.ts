@@ -1,66 +1,29 @@
-import * as Express from 'express';
+import { AuthResponse } from './responses/authResponse';
+import { GeneralResponse } from './responses/generalResponse';
+import { ObjectResponse } from './responses/objectResponses';
+import { LikeResponse } from './responses/likeResponses';
+import { NotiicationResponse } from './responses/notifications';
+import { SearchResponse } from './responses/searchResponse';
+import { UserResponse } from './responses/userResponse';
+import { FavouriteResponse } from './responses/favouritesResponse';
 
 /**
- * A utility class for making responses much easier and faster to write
+ * Auth - 1000:1499
+ * Object - 1500:1999
+ * Likes - 2000:2499
+ * Notifications - 2500:2999
+ * Search - 3000:3499
+ * User - 3500:3999
  */
 
-/**
- * 200's - Success
- */
-
-export function success(response: Express.Response, data?: any) {
-    response.status(200).json(data);
-}
-
-/**
- * 400's - Errors
- */
-
-// 400
-export function badRequest(response: Express.Response, error?: any) {
-    response.status(400).json(error);
-}
-
-// 401
-export function unauthorized(response: Express.Response, error?: any) {
-    response.status(401).json(error);
-}
-
-// 403
-export function forbidden(response: Express.Response, error?: any) {
-    response.status(403).json(error);
-}
-
-// 404
-export function notFound(response: Express.Response, error?: any) {
-    response.status(404).json(error);
-}
-
-// 429
-export function tooManyRequests(response: Express.Response, error?: any) {
-    response.status(429).json(error);
-}
-
-/**
- * 500's - Internal Server Errors
- */
-
-// 500
-export function internalServerError(response: Express.Response, error?: any) {
-    response.status(500).json(error);
-}
-
-// 501
-export function notImplemented(response: Express.Response, error?: any) {
-    response.status(501).json(error);
-}
-
-// 502
-export function badGateway(response: Express.Response, error?: any) {
-    response.status(502).json(error);
-}
-
-// 503
-export function serviceUnavailable(response: Express.Response, error?: any) {
-    response.status(503).json(error);
-}
+export const Respond = {
+    success: GeneralResponse.success,
+    notFound: GeneralResponse.notFound,
+    Auth: AuthResponse,
+    Object: ObjectResponse,
+    Like: LikeResponse,
+    Notification: NotiicationResponse,
+    Search: SearchResponse,
+    User: UserResponse,
+    Favourite: FavouriteResponse,
+};

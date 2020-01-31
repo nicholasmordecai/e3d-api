@@ -1,24 +1,39 @@
 import * as Express from 'express';
-import { Objects } from '../models/objects';
+import { Objects, IObject } from '../models/objects';
 import { Likes } from './../models/likes';
-import { badRequest, success, internalServerError, notFound } from '../utils/respond';
 import { Notification, createNotification } from './notifications';
+import { Respond } from '../utils/respond';
 
 export async function objectLiked(request: Express.Request, response: Express.Response): Promise<void> {
     const objectId: number = parseInt(request.params.id);
-    const object = await Objects.findOneByID(objectId);
+
+    if (objectId == null) {
+        return Respond.Like.noObjectIdPassed(response);
+    }
+
+    let object: IObject;
+
+    try {
+        object = await Objects.findOneByID(objectId);
+    } catch (error) {
+        return Respond.Object.errorSearchingForObject(response, null, error, objectId);
+    }
 
     if (!object == null) {
-        return notFound(response, `Object ${objectId} was not found`);
+        return Respond.notFound(response, null, { objectId: objectId });
     }
 
     const exists = await Likes.alreadyExists(objectId, request.userId);
 
     if (exists) {
-        return badRequest(response, { reason: 'User has already liked this object' });
+        return Respond.Like.userAlreadyLikedObjecty(response, null, null, objectId);
     }
 
-    const result = await Likes.insert(objectId, request.userId);
+    try {
+        await Likes.insert(objectId, request.userId);
+    } catch (error) {
+        return Respond.Like.errorInsertingLikeIntoDatabase(response, null, error, { userId: request.userId, object: object });
+    }
 
     // update the local like counter on the object table
     recalculateObjectsLikeCount(objectId);
@@ -29,11 +44,7 @@ export async function objectLiked(request: Express.Request, response: Express.Re
         createNotification(request.userId, object.user_id, objectId, Notification.objectLiked);
     }
 
-    if (result) {
-        return success(response, { success: true });
-    } else {
-        return internalServerError(response);
-    }
+    return Respond.success(response, { success: true });
 }
 
 export async function recalculateObjectsLikeCount(id: number): Promise<void> {
@@ -54,16 +65,16 @@ export async function getAllObjectLikes(request: Express.Request, response: Expr
     const objectId: number = parseInt(request.params.id);
 
     if (!objectId) {
-        badRequest(response);
+        return Respond.Object.noObjectIdPassed(response);
     }
 
     // TODO check if the object exists, if not - return 404
 
-    const likes = await Likes.findAllByObjectId(objectId);
-    if (!likes) {
-        internalServerError(response, 'Unknown - 548');
-    } else {
-        success(response, likes);
+    try {
+        const likes = await Likes.findAllByObjectId(objectId);
+        return Respond.success(response, likes);
+    } catch (error) {
+        return Respond.Like.errorSearchingForAllLikes(response, null, error, objectId);
     }
 }
 
@@ -71,15 +82,17 @@ export async function totalCountOfLikesByObjectId(request: Express.Request, resp
     const objectId: number = parseInt(request.params.id);
 
     if (!objectId) {
-        badRequest(response);
+        return Respond.Like.noObjectIdPassed(response);
     }
 
-    // TODO check if the object exists, if not - return 404
-
-    const likes = await Likes.countLikes(objectId);
-    if (!likes) {
-        internalServerError(response, 'Unknown - 548');
-    } else {
-        success(response, likes);
+    try {
+        const likes = await Likes.countLikes(objectId);
+        if (likes == null) {
+            return Respond.notFound(response, null, null, { objectId: objectId });
+        } else {
+            return Respond.success(response, likes);
+        }
+    } catch (error) {
+        return Respond.Like.errorCountingLikes(response, null, error, { objectId: objectId });
     }
 }

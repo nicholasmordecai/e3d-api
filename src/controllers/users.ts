@@ -1,21 +1,44 @@
 import * as Express from 'express';
 import { Users, IUser } from './../models/users';
-import { Likes } from './../models/likes';
-import { Favourites } from './../models/favourites';
-import { Objects } from './../models/objects';
-import { success, internalServerError } from './../utils/respond';
+import { Likes, ILike } from './../models/likes';
+import { Favourites, IFavourite } from './../models/favourites';
+import { Objects, IObject } from './../models/objects';
+import { Respond } from './../utils/respond';
+
+interface ISanitizedUser {
+    firstname: string,
+    lastname: string,
+    exp: number,
+    level: number,
+}
+
+interface ISanitizedPrivateProfile {
+    user: ISanitizedUser;
+    likes: ILike[];
+    objects: IObject[];
+    favourites: IFavourite[];
+}
 
 export async function getUserProfile(request: Express.Request, response: Express.Response) {
-    const user = await Users.findOneByID(request.userId);
-
-    if (user === undefined) {
-        internalServerError(response, { error: 'Error while retrieving user' });
-        return;
+    // this should be a redundant check as it should not be possible to get here, better safe than sorry though!
+    if (request.userId == null) {
+        return Respond.User.noUserIdFromJWTToken(response);
     }
 
-    const sanitizedUser = sanitizeUserData(user);
 
-    success(response, sanitizedUser);
+    let user: IUser;
+    try {
+        user = await Users.findOneByID(request.userId);
+        if (user === undefined) {
+            return Respond.User.errorSearchingForUser(response, null, null, { user: user, userId: request.userId });
+        }
+    } catch (error) {
+        return Respond.User.errorSearchingForUser(response, null, error, { user: user, userId: request.userId });
+    }
+
+    const sanitizedUser: ISanitizedUser = sanitizeUserData(user);
+
+    Respond.success(response, sanitizedUser);
 }
 
 const sanitizeUserData = (user: IUser) => {
@@ -28,38 +51,61 @@ const sanitizeUserData = (user: IUser) => {
 };
 
 export async function getCompleteUserProfile(request: Express.Request, response: Express.Response) {
-    const user = await Users.findOneByID(request.userId);
-    if (user == null) {
-        internalServerError(response, { error: 'Error while retrieving user' });
-        return;
+    let user: IUser;
+    let likes: ILike[];
+    let objects: IObject[];
+    let favourites: IFavourite[];
+
+    // get the core user profile
+    try {
+        user = await Users.findOneByID(request.userId);
+        if (user == null) {
+            return Respond.User.errorSearchingForUser(response, null, null, { user: user, userId: request.userId });
+        }
+    } catch (error) {
+        return Respond.User.errorSearchingForUser(response, null, error, { user: user, userId: request.userId });
     }
 
-    const likes = await Likes.findAllByUserID(request.userId);
-    if (likes == null) {
-        internalServerError(response, { error: 'Error while retrieving likes' });
-        return;
+    // get all user likes
+    try {
+        likes = await Likes.findAllByUserID(request.userId);
+        if (likes == null) {
+            return Respond.Like.errorSearchingForAllLikes(response, null, null, { user: user, likes });
+        }
+    } catch (error) {
+        return Respond.Like.errorSearchingForAllLikes(response, null, error, { user: user, likes: likes });
     }
 
-    const objects = await Objects.findAllByUserID(request.userId);
-    if (objects == null) {
-        internalServerError(response, { error: 'Error while retrieving objects' });
-        return;
+    // get all user objects
+    try {
+        objects = await Objects.findAllByUserID(request.userId);
+        if (objects == null) {
+            return Respond.Object.errorFindingAllObjectsFromUserId(response, null, null, { user: user, objects });
+        }
+    } catch (error) {
+        return Respond.Like.errorSearchingForAllLikes(response, null, error, { user: user, likes: likes });
     }
 
-    const favourites = await Favourites.findAllByUserID(request.userId);
-    if (favourites == null) {
-        internalServerError(response, { error: 'Error while retrieving favourites' });
-        return;
+
+    // get all user favourites
+    try {
+        favourites = await Favourites.findAllByUserID(request.userId);
+        if (favourites == null) {
+            return Respond.Favourite.errorFindingAllFavouritesFromUserId(response, null, null, { user: user, objects });
+        }
+    } catch (error) {
+        return Respond.Like.errorSearchingForAllLikes(response, null, error, { user: user, likes: likes });
     }
+
 
     const sanitizedUser = sanitizeUserData(user);
 
-    const profile = {
+    const profile: ISanitizedPrivateProfile = {
         user: sanitizedUser,
         likes,
         objects,
         favourites,
     };
 
-    success(response, profile);
+    Respond.success(response, profile);
 }

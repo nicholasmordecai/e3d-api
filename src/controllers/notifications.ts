@@ -1,6 +1,6 @@
 import * as Express from 'express';
-import { notFound, success, internalServerError } from '../utils/respond';
 import { Notifications } from './../models/notifications';
+import { Respond } from './../utils/respond';
 
 export enum Notification {
     objectLiked = 0,
@@ -16,17 +16,17 @@ export async function notificationRead(request: Express.Request, response: Expre
     const notificationId: number = parseInt(request.body.notificationId);
 
     if (!notificationId) {
-        return notFound(response, 'No notification ID was passed');
+        return Respond.notFound(response);
     }
 
     try {
         const updated = await Notifications.markAsSeen(notificationId, request.userId);
         if (updated) {
-            success(response, { success: true });
+            return Respond.success(response, { success: true });
         } else {
-            internalServerError(response, { error: 'unknown error when marking notification as seen' });
+            return Respond.Notification.couldNotMarkAsSeen(response, null, null, { updated: updated, notificationId: notificationId });
         }
     } catch (error) {
-        internalServerError(response, { error: error });
+        return Respond.Notification.couldNotMarkAsSeen(response, null, error, { notificationId: notificationId });
     }
 }
