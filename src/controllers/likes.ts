@@ -85,11 +85,13 @@ export async function totalCountOfLikesByObjectId(request: Express.Request, resp
         return Respond.Like.noObjectIdPassed(response);
     }
 
-    // TODO check if the object exists, if not - return 404
-
     try {
         const likes = await Likes.countLikes(objectId);
-        return Respond.success(response, likes);
+        if (likes == null) {
+            return Respond.notFound(response, null, null, { objectId: objectId });
+        } else {
+            return Respond.success(response, likes);
+        }
     } catch (error) {
         return Respond.Like.errorCountingLikes(response, null, error, { objectId: objectId });
     }

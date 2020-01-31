@@ -23,6 +23,7 @@
         "indent": ["error", 4],
         "max-len": ["error", 150],
         "object-curly-spacing": ["error", "always"],
+        "no-unreachable": 2,
         "@typescript-eslint/no-unused-vars": 2
     }
 }
