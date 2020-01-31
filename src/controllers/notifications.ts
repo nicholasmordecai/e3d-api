@@ -1,5 +1,5 @@
 import * as Express from 'express';
-import { BadRequest, NotFound, Success, InternalServerError } from '../utils/respond';
+import { notFound, success, internalServerError } from '../utils/respond';
 import { Notifications } from './../models/notifications';
 
 export enum Notification {
@@ -15,19 +15,18 @@ export async function createNotification(userId: number, notifierId: number, ref
 export async function notificationRead(request: Express.Request, response: Express.Response): Promise<void> {
     const notificationId: number = parseInt(request.body.notificationId);
 
-    if(!notificationId) {
-        return NotFound(response, 'No notification ID was passed');
+    if (!notificationId) {
+        return notFound(response, 'No notification ID was passed');
     }
 
     try {
-    const updated = await Notifications.markAsSeen(notificationId, request.userId);
-        if(updated) {
-            Success(response, {success: true});
+        const updated = await Notifications.markAsSeen(notificationId, request.userId);
+        if (updated) {
+            success(response, { success: true });
         } else {
-            InternalServerError(response, {error: 'unknown error when marking notification as seen'});
+            internalServerError(response, { error: 'unknown error when marking notification as seen' });
         }
-    }
-    catch(error) {
-        InternalServerError(response, {error: error}); 
+    } catch (error) {
+        internalServerError(response, { error: error });
     }
 }

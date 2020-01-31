@@ -1,6 +1,7 @@
-import {FieldPacket, QueryError} from 'mysql2';
+import { FieldPacket, QueryError } from 'mysql2';
 import { MySQL } from './../system/mysql';
 
+/* eslint-disable */
 export interface IUser {
     id: number;
     firstname?: string;
@@ -12,12 +13,13 @@ export interface IUser {
     exp: number;
     level: number;
 }
+/* eslint-enable */
 
 export class Users {
     public static async findOneByID(id: number): Promise<IUser | null> {
         const query = 'SELECT * FROM users WHERE id = ? LIMIT 1';
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [id]);
-        if(result[0] != null) {
+        if (result[0] != null) {
             return result[0][0];
         } else {
             return null;
@@ -27,7 +29,7 @@ export class Users {
     public static async findOneByEmail(email: string): Promise<IUser | null> {
         const query = 'SELECT * FROM users WHERE email = ? LIMIT 1';
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [email]);
-        if(result[0] != null) {
+        if (result[0] != null) {
             return result[0][0];
         } else {
             return null;
@@ -42,7 +44,7 @@ export class Users {
             WHERE tokens.token = ?
             LIMIT 1;`;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [refreshToken]);
-        if(result[0] != null) {
+        if (result[0] != null) {
             return result[0][0];
         } else {
             return null;
@@ -57,7 +59,7 @@ export class Users {
             (?, ?, ?, ?);
         `;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [firstname, lastname, email, password]);
-        if(result[0] != null) {
+        if (result[0] != null) {
             return result[0];
         } else {
             return null;

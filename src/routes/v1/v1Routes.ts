@@ -1,13 +1,14 @@
-import * as Express from 'express';
+import { Router } from 'express';
 import { AuthRoute } from './auth';
 import { ObjectRoute } from './objects';
 import { CollectionsRoute } from './collections';
 import { NotificationRoute } from './notifications';
-import { UsersRoute } from './users'
+import { UsersRoute } from './users';
 
 export class V1Routes {
     public static setup() {
-        const router = Express.Router();
+        // eslint-disable-next-line new-cap
+        const router = Router();
         router.use('/auth', new AuthRoute().expressRouter);
         router.use('/object', new ObjectRoute().expressRouter);
         router.use('/collection', new CollectionsRoute().expressRouter);

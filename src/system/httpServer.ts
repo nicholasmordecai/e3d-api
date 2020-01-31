@@ -11,7 +11,6 @@ http.globalAgent.maxSockets = Infinity;
 import { V1Routes } from './../routes/v1/v1Routes';
 
 export class HTTPServer {
-
     public _expressServer: Express.Application;
 
     constructor() {
@@ -19,6 +18,7 @@ export class HTTPServer {
     }
 
     private async start() {
+        // eslint-disable-next-line new-cap
         this._expressServer = Express();
         // setup security (using helmet)
         this._expressServer.use(helmet());
@@ -33,7 +33,7 @@ export class HTTPServer {
         // use the cookie parser module to enable json data being accepted
         this._expressServer.use(cookieParser());
 
-        // list the accessible API versions here 
+        // list the accessible API versions here
         this._expressServer.use('/api/v1', V1Routes.setup());
         // this._expressServer.use('/api/v1');
 

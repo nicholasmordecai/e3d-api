@@ -1,21 +1,21 @@
-import * as Express from 'express'
-import { Users, IUser } from './../models/users'
-import { Likes } from './../models/likes'
-import { Favourites } from './../models/favourites'
-import { Objects } from './../models/objects'
-import { BadRequest, Success, InternalServerError } from './../utils/respond';
+import * as Express from 'express';
+import { Users, IUser } from './../models/users';
+import { Likes } from './../models/likes';
+import { Favourites } from './../models/favourites';
+import { Objects } from './../models/objects';
+import { success, internalServerError } from './../utils/respond';
 
 export async function getUserProfile(request: Express.Request, response: Express.Response) {
     const user = await Users.findOneByID(request.userId);
 
     if (user === undefined) {
-        InternalServerError(response, {error: 'Error while retrieving user'});
+        internalServerError(response, { error: 'Error while retrieving user' });
         return;
     }
 
     const sanitizedUser = sanitizeUserData(user);
 
-    Success(response, sanitizedUser);
+    success(response, sanitizedUser);
 }
 
 const sanitizeUserData = (user: IUser) => {
@@ -23,33 +23,32 @@ const sanitizeUserData = (user: IUser) => {
         firstname: user.firstname,
         lastname: user.lastname,
         exp: user.exp,
-        level: user.level
-    }
-}
+        level: user.level,
+    };
+};
 
 export async function getCompleteUserProfile(request: Express.Request, response: Express.Response) {
-
     const user = await Users.findOneByID(request.userId);
     if (user == null) {
-        InternalServerError(response, {error: 'Error while retrieving user'});
+        internalServerError(response, { error: 'Error while retrieving user' });
         return;
     }
 
-    const likes = await Likes.findAllByUserID(request.userId)
+    const likes = await Likes.findAllByUserID(request.userId);
     if (likes == null) {
-        InternalServerError(response, {error: 'Error while retrieving likes'});
+        internalServerError(response, { error: 'Error while retrieving likes' });
         return;
     }
 
-    const objects = await Objects.findAllByUserID(request.userId)
+    const objects = await Objects.findAllByUserID(request.userId);
     if (objects == null) {
-        InternalServerError(response, {error: 'Error while retrieving objects'});
+        internalServerError(response, { error: 'Error while retrieving objects' });
         return;
     }
 
     const favourites = await Favourites.findAllByUserID(request.userId);
     if (favourites == null) {
-        InternalServerError(response, {error: 'Error while retrieving favourites'});
+        internalServerError(response, { error: 'Error while retrieving favourites' });
         return;
     }
 
@@ -59,8 +58,8 @@ export async function getCompleteUserProfile(request: Express.Request, response:
         user: sanitizedUser,
         likes,
         objects,
-        favourites
-    }
+        favourites,
+    };
 
-    Success(response, profile);
+    success(response, profile);
 }

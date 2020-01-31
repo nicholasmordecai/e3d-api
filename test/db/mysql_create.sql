@@ -79,17 +79,22 @@ CREATE TABLE `collections` (
   `user_id` int(11) unsigned NOT NULL,
   `name` varchar(45) NOT NULL,
   `description` varchar(255) NOT NULL,
-  `visibility` tinyint(2) unsigned NOT NULL,
+  `visibility` tinyint(2) unsigned NOT NULL DEFAULT '1',
+  `followers` int(11) NOT NULL DEFAULT '0',
+  `created_at` bigint(36) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `collection_objects` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `collection_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `object_id` int(11) unsigned NOT NULL,
+  `added_at` bigint(36) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `comments` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

@@ -1,13 +1,15 @@
-import {FieldPacket, QueryError} from 'mysql2';
+import { FieldPacket, QueryError } from 'mysql2';
 import { MySQL } from './../system/mysql';
 import { recordInsertedCorrectly, returnAll, recordDeletedCorrectly } from '../utils/dbUtils';
 
+/* eslint-disable */
 export interface IObjectTag {
     id: number;
     object_id: number;
     tag_id: number;
     tagged_at: number;
 };
+/* eslint-enable */
 
 export class ObjectTags {
     public static async insertMultiple(objectTags: [number, number, number][]): Promise<boolean> {

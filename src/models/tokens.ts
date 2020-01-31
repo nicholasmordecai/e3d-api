@@ -1,6 +1,7 @@
-import {FieldPacket, QueryError} from 'mysql2';
+import { FieldPacket, QueryError } from 'mysql2';
 import { MySQL } from './../system/mysql';
 
+/* eslint-disable */
 export enum TokenTypes {
     'refreshToken' = 0,
     'passwordResetToken' = 1,
@@ -13,12 +14,13 @@ export interface Token {
     user_id: number;
     expiration_date: string;
 };
+/* eslint-enable */
 
 export class Tokens {
     public static async findOneByID(userId: number, tokenType: number): Promise<Token | null> {
         const query = 'SELECT * FROM tokens WHERE user_id = ? AND token_type = ? LIMIT 1';
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [userId, tokenType]);
-        if(result[0] != null) {
+        if (result[0] != null) {
             return result[0][0];
         } else {
             return null;
@@ -33,7 +35,7 @@ export class Tokens {
             (?, ?, ?);
         `;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [tokenType, userId, token]);
-        if(result[0] != null) {
+        if (result[0] != null) {
             return result[0];
         } else {
             return null;
@@ -48,7 +50,7 @@ export class Tokens {
             AND token_type = ?;
         `;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [token, userId, tokenType]);
-        if(result[0] != null) {
+        if (result[0] != null) {
             return result[0];
         } else {
             return null;

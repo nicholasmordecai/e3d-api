@@ -1,7 +1,8 @@
-import {FieldPacket, QueryError} from 'mysql2';
+import { FieldPacket, QueryError } from 'mysql2';
 import { MySQL } from '../system/mysql';
 import { returnSingle, returnAll, recordUpdatedCorrectly } from '../utils/dbUtils';
 
+/* eslint-disable */
 export interface IObject {
     id: number;
     parent_object_id: number;
@@ -27,6 +28,7 @@ interface IKeywordSearchResult {
     match: number;
     tags? 
 }
+/* eslint-enable */
 
 export class Objects {
     public static async findOneByID(id: number): Promise<IObject | null> {
@@ -46,9 +48,8 @@ export class Objects {
     }
 
     public static async findAllByUserID(userId: number): Promise<IObject[] | null> {
-
         const query1: string = 'SELECT * FROM objects WHERE user_id = ?';
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query1, [userId])
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query1, [userId]);
         return returnAll(result);
     }
 
