@@ -10,7 +10,7 @@
     "prestart": "tsc",
     "start": "node bin/src/index.js",
     "dev": "nodemon --inspect src/index.ts",
-    "prebuild": "eslint --ext .ts src/",
+    "lint": "eslint --fix --ext .ts src/",
     "pretest": "tsc && tsnd test/setup.ts",
     "test": "ts-mocha --timeout 5000 --exit test/**/*.spec.ts",
     "coverage": "nyc ts-mocha --timeout 5000 --exit test/**/*.spec.ts",

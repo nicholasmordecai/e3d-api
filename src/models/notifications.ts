@@ -1,8 +1,8 @@
-import {FieldPacket, QueryError} from 'mysql2';
-import {MySQL} from './../system/mysql';
-import {recordInsertedCorrectly, recordUpdatedCorrectly, returnSingle, returnAll} from '../utils/dbUtils';
+import { FieldPacket, QueryError } from 'mysql2';
+import { MySQL } from './../system/mysql';
+import { recordInsertedCorrectly, recordUpdatedCorrectly, returnSingle, returnAll } from '../utils/dbUtils';
 
-/* eslint-enable */
+/* eslint-disable */
 export interface INotification {
     id: number;
     user_id: number;
@@ -13,11 +13,15 @@ export interface INotification {
     created_at: number;
     deleted: number;
 };
-/* eslint-disable */
+/* eslint-enable */
 
 export class Notifications {
     public static async createNotification(userId: number, notifierId: number, action: number, referenceId: number): Promise<boolean | null> {
-        const query = 'INSERT INTO notifications (user_id, notifier_id, action, reference_id, created_at) VALUES (?, ?, ?, ?, UNIX_TIMESTAMP() * 1000);';
+        const query = `
+            INSERT INTO notifications 
+            (user_id, notifier_id, action, reference_id, created_at) 
+            VALUES 
+            (?, ?, ?, ?, UNIX_TIMESTAMP() * 1000);`;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [userId, notifierId, action, referenceId]);
         return recordInsertedCorrectly(result);
     }

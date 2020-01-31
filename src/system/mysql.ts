@@ -3,7 +3,6 @@ import { Config } from './../utils/config';
 let connectionPool: Pool;
 
 export class MySQL {
-
     public static async getUserPool(): Promise<PoolConnection> {
         if (!connectionPool) {
             connectionPool = createPool({

@@ -22,6 +22,7 @@
         "require-jsdoc" : 0,
         "indent": ["error", 4],
         "max-len": ["error", 150],
-        "import/no-unused-modules": [1, {"unusedExports": true}]
+        "object-curly-spacing": ["error", "always"],
+        "@typescript-eslint/no-unused-vars": 2
     }
 }

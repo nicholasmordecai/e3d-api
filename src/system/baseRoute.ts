@@ -1,54 +1,55 @@
-import * as Express from 'express';
+import { Router } from 'express';
 import { restrictedRoute } from './../controllers/auth';
 
 export class BaseRoute {
-    protected router: Express.Router;
+    protected router: Router;
 
     constructor() {
-        this.router = Express.Router();
+        // eslint-disable-next-line new-cap
+        this.router = Router();
     }
 
-    GET(route: string, handler: any, restructed: boolean = false) {
-        if(restructed) {
+    get(route: string, handler: any, restructed: boolean = false) {
+        if (restructed) {
             this.router.get(`${route}`, restrictedRoute, handler);
         } else {
             this.router.get(`${route}`, handler);
         }
     }
 
-    POST(route: string, handler: any, restructed: boolean = false) {
-        if(restructed) {
+    post(route: string, handler: any, restructed: boolean = false) {
+        if (restructed) {
             this.router.post(`${route}`, restrictedRoute, handler);
         } else {
             this.router.post(`${route}`, handler);
         }
     }
 
-    PUT(route: string, handler: any, restructed: boolean = false) {
-        if(restructed) {
+    put(route: string, handler: any, restructed: boolean = false) {
+        if (restructed) {
             this.router.put(`${route}`, restrictedRoute, handler);
         } else {
             this.router.put(`${route}`, handler);
         }
     }
 
-    PATCH(route: string, handler: any, restructed: boolean = false) {
-        if(restructed) {
+    patch(route: string, handler: any, restructed: boolean = false) {
+        if (restructed) {
             this.router.patch(`${route}`, restrictedRoute, handler);
         } else {
             this.router.patch(`${route}`, handler);
         }
     }
 
-    DELETE(route: string, handler: any, restructed: boolean = false) {
-        if(restructed) {
+    delete(route: string, handler: any, restructed: boolean = false) {
+        if (restructed) {
             this.router.delete(`${route}`, restrictedRoute, handler);
         } else {
             this.router.delete(`${route}`, handler);
         }
     }
 
-    public get expressRouter(): Express.Router {
+    public get expressRouter(): Router {
         return this.router;
     }
 }

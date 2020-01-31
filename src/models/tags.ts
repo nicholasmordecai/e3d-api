@@ -1,6 +1,6 @@
-import {FieldPacket, QueryError} from 'mysql2';
-import {MySQL} from './../system/mysql';
-import {recordInsertedCorrectly, returnAll, returnSingle} from '../utils/dbUtils';
+import { FieldPacket, QueryError } from 'mysql2';
+import { MySQL } from './../system/mysql';
+import { recordInsertedCorrectly, returnAll } from '../utils/dbUtils';
 
 /* eslint-disable */
 export interface ITag {

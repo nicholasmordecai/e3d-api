@@ -1,7 +1,7 @@
 import * as Express from 'express';
 import { Users } from './../models/users';
 import { Tokens, TokenTypes } from './../models/tokens';
-import { BadRequest, Unauthorized, Success, InternalServerError } from './../utils/respond';
+import { badRequest, unauthorized, success, internalServerError } from './../utils/respond';
 import { compare, hash } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 import { Config } from './../utils/config';
@@ -24,20 +24,15 @@ interface IPayload {
     exp: number;
 }
 
-/**
- * Login
- * 
- * @description when a user logs in via the website, the data is to the backend, and this function is called to process the login
- */
 export async function login(request: Express.Request, response: Express.Response) {
     const email = request.body.email;
     const password = request.body.password;
     const keepMeSignedIn = request.body.keepMeSignedIn;
 
     // check if the correct parameters have been send
-    if (!email || !password || typeof (email) !== "string" || typeof (password) !== "string") {
+    if (!email || !password || typeof (email) !== 'string' || typeof (password) !== 'string') {
         // respond with server error that incorrect email & password types
-        Unauthorized(response, { error: 'No email or password was passed' });
+        unauthorized(response, { error: 'No email or password was passed' });
         return;
     }
 
@@ -46,7 +41,7 @@ export async function login(request: Express.Request, response: Express.Response
 
         if (!user) {
             // respond with server error as no account has been found
-            Unauthorized(response, { error: 'No user account matched with that username and password' });
+            unauthorized(response, { error: 'No user account matched with that username and password' });
             return;
         }
 
@@ -73,25 +68,24 @@ export async function login(request: Express.Request, response: Express.Response
                         successful = true;
                     }
                 }
-                
-                if(successful){
-                    if(keepMeSignedIn != null && keepMeSignedIn === true) {
-                        Success(response, {success: true, refreshToken: token});
+
+                if (successful) {
+                    if (keepMeSignedIn != null && keepMeSignedIn === true) {
+                        success(response, { success: true, refreshToken: token });
                     } else {
                         const accessToken = generateAccessToken(user.id, user.email);
-                        Success(response, {success: true, accessToken: accessToken});
+                        success(response, { success: true, accessToken: accessToken });
                     }
-                    
                 } else {
-                    InternalServerError(response, {error: 'Error while signing you in'});
+                    internalServerError(response, { error: 'Error while signing you in' });
                 }
             } else {
                 // respond with login error - make this the same error as above so it is indistinguishable between a wrong email and a wrong password
-                Unauthorized(response, { error: 'No user account matched with that username and password' });
+                unauthorized(response, { error: 'No user account matched with that username and password' });
             }
         });
     } catch (dbError) {
-        InternalServerError(response, dbError);
+        internalServerError(response, dbError);
         throw dbError;
     }
 }
@@ -103,32 +97,32 @@ export async function createAccount(request: Express.Request, response: Express.
     const lastname = request.body.lastname;
 
     if (!email || !password) {
-        BadRequest(response, { success: false, reason: 'No email or password was provided' });
+        badRequest(response, { success: false, reason: 'No email or password was provided' });
     }
 
     try {
         const existingUser = await Users.findOneByEmail(email);
 
         if (existingUser != null) {
-            BadRequest(response, { success: false, reason: 'Email address already registered' });
+            badRequest(response, { success: false, reason: 'Email address already registered' });
             return;
         }
 
         hash(password, 10, async (error, hash) => {
-            if(error) {
-                InternalServerError(response, {success: false, reason: 'Error when trying to hash the password'});
+            if (error) {
+                internalServerError(response, { success: false, reason: 'Error when trying to hash the password' });
                 return;
             }
             const newAccount = await Users.insertOne(email, hash, firstname, lastname);
 
             if (newAccount) {
-                Success(response, { success: true });
+                success(response, { success: true });
             } else {
-                InternalServerError(response, { success: false, error: newAccount });
+                internalServerError(response, { success: false, error: newAccount });
             }
         });
     } catch (error) {
-        InternalServerError(response, { success: false, reason: 'Error when trying to create an account', error: error });
+        internalServerError(response, { success: false, reason: 'Error when trying to create an account', error: error });
     }
 }
 
@@ -136,16 +130,16 @@ export async function getAccessToken(request: Express.Request, response: Express
     const refreshToken = request.body.refreshToken;
 
     if (!refreshToken) {
-        BadRequest(response, { success: false, reason: 'No refresh token passed' });
+        badRequest(response, { success: false, reason: 'No refresh token passed' });
         return;
     }
 
     const user = await Users.findOneByRefreshToken(refreshToken);
     if (user) {
         const token = generateAccessToken(user.id, user.email);
-        Success(response, { success: true, accessToken: token });
+        success(response, { success: true, accessToken: token });
     } else {
-        Unauthorized(response, { success: false, reason: 'Refresh token could not be found' });
+        unauthorized(response, { success: false, reason: 'Refresh token could not be found' });
     }
 }
 
@@ -157,15 +151,15 @@ export function decodeAccessToken(token: string): IPayload {
 export function generateAccessToken(id: number, email: string) {
     // TODO add the iss as part of the config
 
-    let data = {
+    const data = {
         cid: id,
         sub: email,
         iss: 'e3d',
-    }
+    };
     let token: string = null;
     try {
         token = sign(data, Config.options.accessTokenSecret, {
-            expiresIn: '30m'
+            expiresIn: '30m',
         });
     } catch (err) {
         throw err;
@@ -177,7 +171,7 @@ export function restrictedRoute(request: Express.Request, response: Express.Resp
     const token: string = request.headers.authorization as string;
 
     if (token === undefined) {
-        return Unauthorized(response);
+        return unauthorized(response);
     }
 
     try {
@@ -187,9 +181,9 @@ export function restrictedRoute(request: Express.Request, response: Express.Resp
         return next();
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-            return Unauthorized(response, { reason: 'Access token expired' });
+            return unauthorized(response, { reason: 'Access token expired' });
         } else {
-            return Unauthorized(response, { error: error });
+            return unauthorized(response, { error: error });
         }
     }
 }

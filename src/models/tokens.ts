@@ -1,5 +1,5 @@
-import {FieldPacket, QueryError} from 'mysql2';
-import {MySQL} from './../system/mysql';
+import { FieldPacket, QueryError } from 'mysql2';
+import { MySQL } from './../system/mysql';
 
 /* eslint-disable */
 export enum TokenTypes {

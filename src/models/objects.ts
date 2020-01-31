@@ -1,6 +1,6 @@
-import {FieldPacket, QueryError} from 'mysql2';
-import {MySQL} from '../system/mysql';
-import {returnSingle, returnAll, recordUpdatedCorrectly} from '../utils/dbUtils';
+import { FieldPacket, QueryError } from 'mysql2';
+import { MySQL } from '../system/mysql';
+import { returnSingle, returnAll, recordUpdatedCorrectly } from '../utils/dbUtils';
 
 /* eslint-disable */
 export interface IObject {

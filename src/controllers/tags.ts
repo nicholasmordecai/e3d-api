@@ -1,8 +1,8 @@
 import { Tags, ITag } from './../models/tags';
-import { ObjectTags, IObjectTag } from './../models/objectTags';
+import { ObjectTags } from './../models/objectTags';
 import { uniqueElements } from './../utils/utils';
 
-export async function tagObject(objectID: number, tags: string[]): Promise<void>{
+export async function tagObject(objectID: number, tags: string[]): Promise<void> {
     // get existing tags
     const existingTags: ITag[] = await Tags.findMultipleByTagNames(tags);
     const existingsTagsAsStrings: string[] = existingTags.map((index) => index.tag);
@@ -11,7 +11,7 @@ export async function tagObject(objectID: number, tags: string[]): Promise<void>
     // create any tags that don't already exist
     type uniqueTag = [string, number]
     const uniqueTags: uniqueTag[] = uniqueElements<string>(tags, existingsTagsAsStrings).map((i) => [i, dateNow]);
-    if(uniqueTags.length > 0) {
+    if (uniqueTags.length > 0) {
         await Tags.insertMultipleTags(uniqueTags);
     }
 
@@ -25,25 +25,25 @@ export async function tagObject(objectID: number, tags: string[]): Promise<void>
     const existingObjectTagIds: number[] = existingObjectTags.map((v) => v.tag_id);
 
     // find which tags are already duplicated and only push to the toInsert array those that are unique
-    for(let tagId of tagIDs) {
-        if(!existingObjectTagIds.includes(tagId)) {
+    for (const tagId of tagIDs) {
+        if (!existingObjectTagIds.includes(tagId)) {
             tagIdsToInsert.push(tagId);
         }
     }
 
     // if there are tags that need to be added to the object, then do so here
-    if(tagIdsToInsert.length >= 1) {
+    if (tagIdsToInsert.length >= 1) {
         type newObjectTag = [number, number, number];
         const objectTags: newObjectTag[] = [];
-    
-        for(let id of tagIdsToInsert) {
+
+        for (const id of tagIdsToInsert) {
             objectTags.push([
                 objectID,
                 id,
-                dateNow
+                dateNow,
             ]);
         }
-    
+
         await ObjectTags.insertMultiple(objectTags);
     }
 }

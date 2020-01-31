@@ -1,6 +1,6 @@
-import {FieldPacket, QueryError} from 'mysql2';
-import {MySQL} from '../system/mysql';
-import {recordInsertedCorrectly, recordUpdatedCorrectly, returnSingle, returnAll} from '../utils/dbUtils';
+import { FieldPacket, QueryError } from 'mysql2';
+import { MySQL } from '../system/mysql';
+import { recordInsertedCorrectly, returnSingle, returnAll } from '../utils/dbUtils';
 
 /*eslint-disable */
 export interface ICollection {
