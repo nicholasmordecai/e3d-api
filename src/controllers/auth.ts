@@ -1,10 +1,10 @@
 import * as Express from 'express';
 import { Users } from './../models/users';
 import { Tokens, TokenTypes } from './../models/tokens';
-import { badRequest, unauthorized, success, internalServerError } from './../utils/respond';
 import { compare, hash } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
 import { Config } from './../utils/config';
+import { Respond } from '../utils/apiResponse';
 import { v4 } from 'uuid';
 
 declare global {
@@ -32,7 +32,7 @@ export async function login(request: Express.Request, response: Express.Response
     // check if the correct parameters have been send
     if (!email || !password || typeof (email) !== 'string' || typeof (password) !== 'string') {
         // respond with server error that incorrect email & password types
-        unauthorized(response, { error: 'No email or password was passed' });
+
         return;
     }
 
@@ -41,7 +41,8 @@ export async function login(request: Express.Request, response: Express.Response
 
         if (!user) {
             // respond with server error as no account has been found
-            unauthorized(response, { error: 'No user account matched with that username and password' });
+
+            // respond(response, apiErrors[0]);
             return;
         }
 
@@ -71,21 +72,21 @@ export async function login(request: Express.Request, response: Express.Response
 
                 if (successful) {
                     if (keepMeSignedIn != null && keepMeSignedIn === true) {
-                        success(response, { success: true, refreshToken: token });
+                        Respond.success(response, { success: true, refreshToken: token });
                     } else {
                         const accessToken = generateAccessToken(user.id, user.email);
-                        success(response, { success: true, accessToken: accessToken });
+                        Respond.success(response, { success: true, accessToken: accessToken });
                     }
                 } else {
-                    internalServerError(response, { error: 'Error while signing you in' });
+                    Respond.Auth.couldNotSignIn(response);
                 }
             } else {
                 // respond with login error - make this the same error as above so it is indistinguishable between a wrong email and a wrong password
-                unauthorized(response, { error: 'No user account matched with that username and password' });
+                Respond.Auth.passwordsDoNotMatch(response);
             }
         });
     } catch (dbError) {
-        internalServerError(response, dbError);
+        Respond.Auth.couldNotSignIn(response, dbError);
         throw dbError;
     }
 }
@@ -97,32 +98,36 @@ export async function createAccount(request: Express.Request, response: Express.
     const lastname = request.body.lastname;
 
     if (!email || !password) {
-        badRequest(response, { success: false, reason: 'No email or password was provided' });
+        Respond.Auth.noPasswordOrEmailPassed(response);
     }
 
     try {
         const existingUser = await Users.findOneByEmail(email);
 
         if (existingUser != null) {
-            badRequest(response, { success: false, reason: 'Email address already registered' });
+            Respond.Auth.userAlreadyExists(response);
             return;
         }
 
         hash(password, 10, async (error, hash) => {
             if (error) {
-                internalServerError(response, { success: false, reason: 'Error when trying to hash the password' });
+                Respond.Auth.couldNotHasPassword(response, null, error);
                 return;
             }
-            const newAccount = await Users.insertOne(email, hash, firstname, lastname);
+            try {
+                const newAccount = await Users.insertOne(email, hash, firstname, lastname);
 
-            if (newAccount) {
-                success(response, { success: true });
-            } else {
-                internalServerError(response, { success: false, error: newAccount });
+                if (newAccount) {
+                    Respond.success(response, { success: true });
+                } else {
+                    Respond.Auth.couldNotInsertNewUser(response, null, newAccount, newAccount);
+                }
+            } catch (error) {
+                Respond.Auth.couldNotInsertNewUser(response, null, error, null);
             }
         });
     } catch (error) {
-        internalServerError(response, { success: false, reason: 'Error when trying to create an account', error: error });
+        Respond.Auth.couldNotCreateAccount(response, null, error, { email: email });
     }
 }
 

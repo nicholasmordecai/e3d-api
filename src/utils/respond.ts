@@ -1,4 +1,15 @@
-import * as Express from 'express';
+import { Response } from 'express';
+import { Config } from './config';
+
+
+interface IAPIError {
+    code: number;
+    reason: string;
+    data: any;
+    time: number;
+    error: any;
+    debug?: any;
+}
 
 /**
  * A utility class for making responses much easier and faster to write
@@ -8,8 +19,8 @@ import * as Express from 'express';
  * 200's - Success
  */
 
-export function success(response: Express.Response, data?: any) {
-    response.status(200).json(data);
+export function success(response: Response, code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}) {
+    response.status(200).json(generateResponseBody(code, reason, data, error, debug));
 }
 
 /**
@@ -17,28 +28,28 @@ export function success(response: Express.Response, data?: any) {
  */
 
 // 400
-export function badRequest(response: Express.Response, error?: any) {
-    response.status(400).json(error);
+export function badRequest(response: Response, code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}) {
+    response.status(400).json(generateResponseBody(code, reason, data, error, debug));
 }
 
 // 401
-export function unauthorized(response: Express.Response, error?: any) {
-    response.status(401).json(error);
+export function unauthorized(response: Response, code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}) {
+    response.status(401).json(generateResponseBody(code, reason, data, error, debug));
 }
 
 // 403
-export function forbidden(response: Express.Response, error?: any) {
-    response.status(403).json(error);
+export function forbidden(response: Response, code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}) {
+    response.status(403).json(generateResponseBody(code, reason, data, error, debug));
 }
 
 // 404
-export function notFound(response: Express.Response, error?: any) {
-    response.status(404).json(error);
+export function notFound(response: Response, code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}) {
+    response.status(404).json(generateResponseBody(code, reason, data, error, debug));
 }
 
 // 429
-export function tooManyRequests(response: Express.Response, error?: any) {
-    response.status(429).json(error);
+export function tooManyRequests(response: Response, code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}) {
+    response.status(429).json(generateResponseBody(code, reason, data, error, debug));
 }
 
 /**
@@ -46,21 +57,37 @@ export function tooManyRequests(response: Express.Response, error?: any) {
  */
 
 // 500
-export function internalServerError(response: Express.Response, error?: any) {
-    response.status(500).json(error);
+export function internalServerError(response: Response, code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}) {
+    response.status(500).json(generateResponseBody(code, reason, data, error, debug));
 }
 
 // 501
-export function notImplemented(response: Express.Response, error?: any) {
-    response.status(501).json(error);
+export function notImplemented(response: Response, code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}) {
+    response.status(501).json(generateResponseBody(code, reason, data, error, debug));
 }
 
 // 502
-export function badGateway(response: Express.Response, error?: any) {
-    response.status(502).json(error);
+export function badGateway(response: Response, code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}) {
+    response.status(502).json(generateResponseBody(code, reason, data, error, debug));
 }
 
 // 503
-export function serviceUnavailable(response: Express.Response, error?: any) {
-    response.status(503).json(error);
+export function serviceUnavailable(response: Response, code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}) {
+    response.status(503).json(generateResponseBody(code, reason, data, error, debug));
+}
+
+function generateResponseBody(code: number, reason: string, data: any = {}, error: any = {}, debug: any = {}): IAPIError {
+    const responseBody: IAPIError = {
+        code: code,
+        reason: reason,
+        data: data,
+        error: error,
+        time: new Date().getTime(),
+    };
+
+    if (Config.options.environment === 'development') {
+        error.debug = debug;
+    }
+
+    return responseBody;
 }
