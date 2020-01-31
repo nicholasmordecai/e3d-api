@@ -1,6 +1,7 @@
 import { AuthResponse } from './responses/authResponse';
 import { GeneralResponse } from './responses/generalResponse';
 import { ObjectResponse } from './responses/objectResponses';
+import { LikeResponse } from './responses/likeResponses';
 
 /**
  * Auth - 1000:1499
@@ -9,8 +10,9 @@ import { ObjectResponse } from './responses/objectResponses';
  */
 
 export const Respond = {
-    Auth: AuthResponse,
     success: GeneralResponse.success,
     notFound: GeneralResponse.notFound,
+    Auth: AuthResponse,
     Object: ObjectResponse,
+    Like: LikeResponse,
 };
