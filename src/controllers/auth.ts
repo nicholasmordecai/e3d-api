@@ -22,6 +22,7 @@ export interface IPayload {
     iss: string;
     iat: number;
     exp: number;
+    trk: string;
 }
 
 export async function login(request: Express.Request, response: Express.Response) {
@@ -69,7 +70,7 @@ export async function login(request: Express.Request, response: Express.Response
                     if (keepMeSignedIn != null && keepMeSignedIn === true) {
                         return Respond.success(response, { success: true, refreshToken: token });
                     } else {
-                        const accessToken = generateAccessToken(user.id, user.email);
+                        const accessToken = generateAccessToken(user.id, user.email, user.tracking_id);
                         return Respond.success(response, { success: true, accessToken: accessToken });
                     }
                 } else {
@@ -108,7 +109,8 @@ export async function createAccount(request: Express.Request, response: Express.
                 return;
             }
             try {
-                const newAccount = await Users.insertOne(email, hash, firstname, lastname);
+                const trackingId: string = v4();
+                const newAccount = await Users.insertOne(email, hash, firstname, lastname, trackingId);
 
                 if (newAccount) {
                     Respond.success(response, { success: true });
@@ -133,7 +135,7 @@ export async function getAccessToken(request: Express.Request, response: Express
 
     const user = await Users.findOneByRefreshToken(refreshToken);
     if (user) {
-        const token = generateAccessToken(user.id, user.email);
+        const token = generateAccessToken(user.id, user.email, user.tracking_id);
         return Respond.success(response, { success: true, accessToken: token });
     } else {
         return Respond.Auth.refreshTokenInvalid(response, null, null, { refreshToken: refreshToken });
@@ -145,13 +147,14 @@ export function decodeAccessToken(token: string): IPayload {
     return payload;
 }
 
-export function generateAccessToken(id: number, email: string): string {
+export function generateAccessToken(id: number, email: string, trackingId: string): string {
     // TODO add the iss as part of the config
 
     const data = {
         cid: id,
         sub: email,
         iss: 'e3d',
+        trk: trackingId,
     };
     let token: string = null;
     try {
@@ -169,6 +172,19 @@ export function nonRestrictedRoute(request: Express.Request): number | null {
         const token: IPayload = decodeAccessToken(request.headers.authorization);
         if (token != null) {
             return token.cid;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        return null;
+    }
+}
+
+export function nonRestrictedRouteTrackingId(request: Express.Request): string | null {
+    try {
+        const token: IPayload = decodeAccessToken(request.headers.authorization);
+        if (token != null) {
+            return token.trk;
         } else {
             return null;
         }

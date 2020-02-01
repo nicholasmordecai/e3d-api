@@ -12,6 +12,7 @@ export interface IUser {
     banned: number;
     exp: number;
     level: number;
+    tracking_id: string;
 }
 /* eslint-enable */
 
@@ -51,14 +52,15 @@ export class Users {
         }
     }
 
-    public static async insertOne(email: string, password: string, firstname: string = '', lastname: string = ''): Promise<IUser | null> {
+    public static async insertOne(
+        email: string, password: string, firstname: string = '', lastname: string = '', trackingId: string): Promise<IUser | null> {
         const query = `
             INSERT INTO users
-            (firstname, lastname, email, password)
+            (firstname, lastname, email, password, tracking_id)
             VALUES
-            (?, ?, ?, ?);
+            (?, ?, ?, ?, ?);
         `;
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [firstname, lastname, email, password]);
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [firstname, lastname, email, password, trackingId]);
         if (result[0] != null) {
             return result[0];
         } else {
