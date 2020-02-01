@@ -4,6 +4,8 @@ import { Likes, ILike } from './../models/likes';
 import { Favourites, IFavourite } from './../models/favourites';
 import { Objects, IObject } from './../models/objects';
 import { Respond } from './../utils/respond';
+import { nonRestrictedRoute } from './auth';
+import { Collections } from '../models/collections';
 
 interface ISanitizedUser {
     firstname: string,
@@ -107,5 +109,32 @@ export async function getCompleteUserProfile(request: Express.Request, response:
         favourites,
     };
 
-    Respond.success(response, profile);
+    return Respond.success(response, profile);
+}
+
+export async function getUsersCollections(request: Express.Request, response: Express.Response) {
+    const userId: number = parseInt(request.params.userId);
+    const userTokenId: number = nonRestrictedRoute(request);
+
+    try {
+        if (userTokenId == null || userId !== userTokenId) {
+        // only get any public collections from the user
+            const collections = await Collections.findAllPublicByUserId(userId);
+            if (collections == null) {
+                return Respond.User.errorSearchingForCollections(response);
+            } else {
+                return Respond.success(response, collections);
+            }
+        } else {
+        // the user is the owner, get all regardless of visibility
+            const collections = await Collections.findAllByUserId(userId);
+            if (collections == null) {
+                return Respond.User.errorSearchingForCollections(response);
+            } else {
+                return Respond.success(response, collections);
+            }
+        }
+    } catch (error) {
+        return Respond.User.errorSearchingForCollections(response, null, error);
+    }
 }

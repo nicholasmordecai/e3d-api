@@ -16,7 +16,7 @@ declare global {
     }
 }
 
-interface IPayload {
+export interface IPayload {
     cid: number;
     sub: string;
     iss: string;
@@ -162,6 +162,19 @@ export function generateAccessToken(id: number, email: string): string {
         throw err;
     }
     return token;
+}
+
+export function nonRestrictedRoute(request: Express.Request): number | null {
+    try {
+        const token: IPayload = decodeAccessToken(request.headers.authorization);
+        if (token != null) {
+            return token.cid;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        return null;
+    }
 }
 
 export function restrictedRoute(request: Express.Request, response: Express.Response, next: Express.NextFunction) {

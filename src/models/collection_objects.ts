@@ -1,6 +1,6 @@
 import { FieldPacket, QueryError } from 'mysql2';
 import { MySQL } from '../system/mysql';
-import { recordInsertedCorrectly, recordDeletedCorrectly, returnSingle } from '../utils/dbUtils';
+import { recordInsertedCorrectly, recordDeletedCorrectly, returnSingle, returnAll } from '../utils/dbUtils';
 
 /*eslint-disable */
 export interface ICollectionObject {
@@ -13,6 +13,13 @@ export interface ICollectionObject {
 /* eslint-enable */
 
 export class CollectionObjects {
+    public static async findAllObjects(collectionId: number): Promise<ICollectionObject[] | null> {
+        const query = `
+            SELECT * FROM collection_objects WHERE collection_id = ?`;
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [collectionId]);
+        return returnAll(result);
+    }
+
     public static async addObjectToCollection(collectionId: number, userId: number, objectId: number): Promise<boolean> {
         const query = `
             INSERT INTO collection_objects 
@@ -25,7 +32,7 @@ export class CollectionObjects {
 
     public static async removeObjectFromCollection(objectId: number, collectionId: number, userId: number) {
         const query = `DELETE FROM collection_objects WHERE collection_id = ? AND object_id = ? AND user_id = ? `;
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [objectId, collectionId]);
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [objectId, collectionId, userId]);
         return recordDeletedCorrectly(result);
     }
 

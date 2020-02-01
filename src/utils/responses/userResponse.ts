@@ -17,4 +17,8 @@ export class UserResponse {
     public static errorSearchingForUser(response:Response, data?: any, error?: any, debug?: any): void {
         internalServerError(response, 3900, 'Database error when searching for an user by ID', data, error, debug);
     }
+
+    public static errorSearchingForCollections(response:Response, data?: any, error?: any, debug?: any): void {
+        internalServerError(response, 3901, 'Database error when searching for public collections by user ID', data, error, debug);
+    }
 }

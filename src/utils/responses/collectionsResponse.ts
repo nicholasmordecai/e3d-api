@@ -25,6 +25,10 @@ export class CollectionResponse {
         badRequest(response, 4803, 'The object has already been added to the collection', data, error, debug);
     }
 
+    public static noValuesPassedToUpdate(response:Response, data?: any, error?: any, debug?: any): void {
+        badRequest(response, 4804, 'Could not find any values to update', data, error, debug);
+    }
+
     // Internal server errors - 4900:4999
     public static errorCreatingCollection(response:Response, data?: any, error?: any, debug?: any): void {
         internalServerError(response, 4900, 'Database error when creating a new collection', data, error, debug);
@@ -40,5 +44,13 @@ export class CollectionResponse {
 
     public static errorRemovingCollection(response:Response, data?: any, error?: any, debug?: any): void {
         internalServerError(response, 4903, 'Database error when removing collection', data, error, debug);
+    }
+
+    public static errorSearchingForCollection(response:Response, data?: any, error?: any, debug?: any): void {
+        internalServerError(response, 4904, 'Database error when searching for a collection', data, error, debug);
+    }
+
+    public static couldNotUpdateCollection(response:Response, data?: any, error?: any, debug?: any): void {
+        internalServerError(response, 4905, 'Database error when updating collection', data, error, debug);
     }
 }

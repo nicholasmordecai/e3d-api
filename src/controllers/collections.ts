@@ -1,11 +1,42 @@
 import * as Express from 'express';
 import { Respond } from './../utils/respond';
 import { Collections, ICollection } from './../models/collections';
-import { CollectionObjects } from './../models/collection_objects';
+import { CollectionObjects, ICollectionObject } from './../models/collection_objects';
 import { Objects } from '../models/objects';
+import { nonRestrictedRoute } from './auth';
 
 export async function findCollectionByID(request: Express.Request, response: Express.Response): Promise<void> {
+    const collectionId: number = parseInt(request.params.collection);
 
+    // it's not s restricted route, so need to get the optional user ID out of the header IF it exists
+    const userId: number = nonRestrictedRoute(request);
+
+    if (collectionId == null) return Respond.Collection.noCollectionIdFound(response);
+
+    try {
+        const collection: ICollection = await Collections.findOneById(collectionId);
+
+        if (collection == null) {
+            return Respond.notFound(response);
+        }
+
+        const objects: ICollectionObject[] = await CollectionObjects.findAllObjects(collection.id);
+
+        // if it's public, return it without checking user ID
+        if (collection.visibility === 0) {
+            return Respond.success(response, { collection: collection, objects: objects });
+        } else {
+            // check if user id is owner of the collection
+            if (collection.user_id !== userId) {
+                // the user doesn't own the collection - so return 404
+                return Respond.notFound(response);
+            } else {
+                return Respond.success(response, { collection: collection, objects: objects });
+            }
+        }
+    } catch (error) {
+        return Respond.Collection.errorSearchingForCollection(response, null, error);
+    }
 }
 
 export async function createCollection(request: Express.Request, response: Express.Response): Promise<void> {
@@ -40,7 +71,38 @@ export async function createCollection(request: Express.Request, response: Expre
 }
 
 export async function updateCollection(request: Express.Request, response: Express.Response): Promise<void> {
+    const collectionId: number = parseInt(request.params.collection);
+    const updateValues = request.body.updateValues;
 
+    if (collectionId == null) return Respond.Collection.noCollectionIdFound(response);
+    if (updateValues == null || Object.keys(updateValues).length === 0) {
+        return Respond.Collection.noValuesPassedToUpdate(response);
+    }
+
+    const collection: ICollection = await Collections.findOneById(collectionId);
+    if (collection == null || collection.user_id !== request.userId) {
+        return Respond.notFound(response);
+    }
+
+    // map the incomming variables from all possible update values to the database field names
+    const possibleUpdateKeys: {key: string, dbKey: string}[] = [
+        { key: 'name', dbKey: 'name' },
+        { key: 'description', dbKey: 'description' },
+        { key: 'visibility', dbKey: 'visibility' },
+        { key: 'thumbnailSrc', dbKey: 'thumbnail_src' },
+    ];
+
+    try {
+        const update = await Collections.updateCollection(request.body.updateValues, possibleUpdateKeys, collection.id);
+        if (update === true) {
+            const newCollectionInformation: ICollection = await Collections.findOneById(collection.id);
+            return Respond.success(response, { collection: newCollectionInformation, success: true });
+        } else {
+            return Respond.Collection.couldNotUpdateCollection(response);
+        }
+    } catch (error) {
+        return Respond.Collection.couldNotUpdateCollection(response, null, error);
+    }
 }
 
 export async function addObjectToCollection(request: Express.Request, response: Express.Response): Promise<void> {
@@ -54,7 +116,7 @@ export async function addObjectToCollection(request: Express.Request, response: 
 
     try {
         // make sure the collection exists
-        const collection: ICollection = await Collections.findOneById(objectId);
+        const collection: ICollection = await Collections.findOneById(collectionId);
         if (collection == null) {
             return Respond.notFound(response, null, null, { collection: collection, objectId: objectId });
         }
@@ -97,7 +159,7 @@ export async function removeObjectFromCollection(request: Express.Request, respo
 
     try {
         // make sure the collection exists
-        const collection: ICollection = await Collections.findOneById(objectId);
+        const collection: ICollection = await Collections.findOneById(collectionId);
         if (collection == null) {
             return Respond.notFound(response, null, null, { collection: collection, objectId: objectId });
         }
