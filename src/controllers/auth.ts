@@ -31,19 +31,14 @@ export async function login(request: Express.Request, response: Express.Response
 
     // check if the correct parameters have been send
     if (!email || !password || typeof (email) !== 'string' || typeof (password) !== 'string') {
-        // respond with server error that incorrect email & password types
-
-        return;
+        return Respond.Auth.noPasswordOrEmailPassed(response);
     }
 
     try {
         const user = await Users.findOneByEmail(email);
 
         if (!user) {
-            // respond with server error as no account has been found
-
-            // respond(response, apiErrors[0]);
-            return;
+            return Respond.Auth.passwordsDoNotMatch(response);
         }
 
         // assuming then, that 1 and only 1 account was returned, compare the two passwords and if it's a match, then generate a token.
@@ -161,7 +156,7 @@ export function generateAccessToken(id: number, email: string): string {
     let token: string = null;
     try {
         token = sign(data, Config.options.accessTokenSecret, {
-            expiresIn: '30m',
+            expiresIn: '24h',
         });
     } catch (err) {
         throw err;

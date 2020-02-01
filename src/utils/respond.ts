@@ -6,6 +6,7 @@ import { NotiicationResponse } from './responses/notifications';
 import { SearchResponse } from './responses/searchResponse';
 import { UserResponse } from './responses/userResponse';
 import { FavouriteResponse } from './responses/favouritesResponse';
+import { CollectionResponse } from './responses/collectionsResponse';
 
 /**
  * Auth - 1000:1499
@@ -14,6 +15,8 @@ import { FavouriteResponse } from './responses/favouritesResponse';
  * Notifications - 2500:2999
  * Search - 3000:3499
  * User - 3500:3999
+ * Favourites - 4000:4499
+ * Collection - 4500:4999
  */
 
 export const Respond = {
@@ -26,4 +29,5 @@ export const Respond = {
     Search: SearchResponse,
     User: UserResponse,
     Favourite: FavouriteResponse,
+    Collection: CollectionResponse,
 };

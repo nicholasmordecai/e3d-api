@@ -8,6 +8,14 @@ export function recordInsertedCorrectly(result: [any, FieldPacket[]] | QueryErro
     }
 }
 
+export function getLastInsertedId(result: [any, FieldPacket[]] | QueryError): number {
+    if (result[0].insertId != null) {
+        return result[0].insertId;
+    } else {
+        return null;
+    }
+}
+
 export function recordUpdatedCorrectly(result: [any, FieldPacket[]] | QueryError): boolean {
     if (result[0].affectedRows != null) {
         return true;

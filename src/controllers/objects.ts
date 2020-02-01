@@ -17,7 +17,7 @@ export async function getObjectByIDForWebView(request: Express.Request, response
     let object: IObject;
 
     try {
-        object = await Objects.findOneByID(id);
+        object = await Objects.findOneById(id);
     } catch (error) {
         return Respond.Object.errorSearchingForObject(response, null, error, id);
     }

@@ -12,7 +12,7 @@ export class V1Routes {
         router.use('/auth', new AuthRoute().expressRouter);
         router.use('/object', new ObjectRoute().expressRouter);
         router.use('/collection', new CollectionsRoute().expressRouter);
-        router.use('/notifications', new NotificationRoute().expressRouter);
+        router.use('/notification', new NotificationRoute().expressRouter);
         router.use('/user', new UsersRoute().expressRouter);
         return router;
     }

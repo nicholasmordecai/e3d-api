@@ -31,7 +31,7 @@ interface IKeywordSearchResult {
 /* eslint-enable */
 
 export class Objects {
-    public static async findOneByID(id: number): Promise<IObject | null> {
+    public static async findOneById(id: number): Promise<IObject | null> {
         /**
          * I thought about using transactions, or stored procedures to update the view counter at the same time as the select
          * However, this locking has performance issues.. and worst case scenario, the page displays 1 less count on the view counter.

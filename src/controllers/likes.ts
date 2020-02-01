@@ -14,7 +14,7 @@ export async function objectLiked(request: Express.Request, response: Express.Re
     let object: IObject;
 
     try {
-        object = await Objects.findOneByID(objectId);
+        object = await Objects.findOneById(objectId);
     } catch (error) {
         return Respond.Object.errorSearchingForObject(response, null, error, objectId);
     }
@@ -48,7 +48,7 @@ export async function objectLiked(request: Express.Request, response: Express.Re
 }
 
 export async function recalculateObjectsLikeCount(id: number): Promise<void> {
-    const object = await Objects.findOneByID(id);
+    const object = await Objects.findOneById(id);
     if (!object) {
         return;
     }
