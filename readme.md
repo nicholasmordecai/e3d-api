@@ -19,7 +19,21 @@ MYSQL_DB_PASSWORD=password
 MYSQL_DB_DATABASE=database
 MYSQL_DB_PORT=3306
 JWT_ACCESS_SECRET=abcdefg
+NODE_ENV=development
 ```
+
+### Databasd
+You can find the database creation in test/db/mysql_create.sql. This file will contain all the table schemas (dummy data to follow). With this, you can manually create the database you wish.
+
+Alternativly, you can use the auto db creator script. To do this, you will need to create a secont .env file and call this one 'test.env'. Inside this file, pase the same values as above, except change the NODE_ENV to test.
+
+Once that's been done, you can run the npm script:
+
+``` sh
+$ npm run setup-db
+```
+
+> Note: you must create the schema first in your mysql database. Be sure to use the same database name you created as the one in the .env files
 
 ### Linting
 ESLint is being used for the linting. This used to be tslint, however they migrated both into just eslint with an option for TS support.
