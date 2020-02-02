@@ -11,7 +11,7 @@ export class MySQL {
                 password: Config.options.mysqlPassword,
                 database: Config.options.mysqlDatabase,
                 port: Config.options.mysqlPort,
-                multipleStatements: false,
+                multipleStatements: true,
             });
         }
 

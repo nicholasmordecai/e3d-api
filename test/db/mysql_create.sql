@@ -15,7 +15,6 @@ CREATE TABLE `users` (
   UNIQUE KEY `tracking_id_UNIQUE` (`tracking_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
-
 CREATE TABLE `tokens` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `token_type` tinyint(4) unsigned NOT NULL,

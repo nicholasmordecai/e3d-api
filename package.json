@@ -10,6 +10,7 @@
     "prestart": "tsc",
     "start": "node bin/src/index.js",
     "dev": "nodemon --inspect src/index.ts",
+    "setup-db": "ts-node test/setup.ts",
     "lint": "eslint --fix --ext .ts src/",
     "pretest": "tsc && tsnd test/setup.ts",
     "test": "ts-mocha --timeout 5000 --exit test/**/*.spec.ts",
@@ -54,7 +55,7 @@
     "sinon": "^7.5.0",
     "source-map-support": "^0.5.13",
     "ts-mocha": "^6.0.0",
-    "ts-node": "^8.4.1",
+    "ts-node": "^8.6.2",
     "typescript": "^3.6.3"
   }
 }
