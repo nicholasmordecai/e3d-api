@@ -1,6 +1,6 @@
 import { FieldPacket, QueryError } from 'mysql2';
 import { MySQL } from './../system/mysql';
-import { recordInsertedCorrectly, returnAll, recordDeletedCorrectly } from '../utils/dbUtils';
+import { recordInsertedCorrectly, returnAll, recordDeletedCorrectly, returnSingle } from '../utils/dbUtils';
 
 /* eslint-disable */
 export interface IObjectTag {
@@ -38,5 +38,19 @@ export class ObjectTags {
         const query = 'DELETE FROM object_tag WHERE object_id = ? AND tag_id = ?';
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [objectId, tagId]);
         return recordDeletedCorrectly(result);
+    }
+
+    public static async countTagUsage(tagId: number): Promise<number | null> {
+        const query = `
+            UPDATE tags SET count = 
+            (
+                SELECT COUNT(id) AS count 
+                FROM object_tag 
+                WHERE tag_id = ?
+            )
+            WHERE id = ?
+        `;
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [tagId]);
+        return returnSingle(result);
     }
 }

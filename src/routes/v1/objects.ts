@@ -2,6 +2,7 @@ import { BaseRoute } from '../../system/baseRoute';
 import { createNewObject, getObjectByIDForWebView } from './../../controllers/objects';
 import { searchByKeyword } from './../../controllers/search';
 import { objectLiked, getAllObjectLikes, totalCountOfLikesByObjectId } from './../../controllers/likes';
+import { objectFavourited, unfavouriteObject } from './../../controllers/favourites';
 
 export class ObjectRoute extends BaseRoute {
     constructor() {
@@ -16,7 +17,11 @@ export class ObjectRoute extends BaseRoute {
         this.get('/:id/likes', getAllObjectLikes);
         this.get('/:id/like-count', totalCountOfLikesByObjectId);
 
-        // restricted routes
+        // Likes
         this.post('/:id/liked', objectLiked, true);
+
+        // Favourites
+        this.post('/:id/favourite', objectFavourited, true);
+        this.delete('/:id/favourite', unfavouriteObject, true);
     }
 }

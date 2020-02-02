@@ -5,7 +5,8 @@ import { Respond } from './../utils/respond';
 export enum Notification {
     objectLiked = 0,
     commented = 1,
-    commentLiked = 2
+    commentLiked = 2,
+    objectFavourited = 3
 }
 
 export async function createNotification(userId: number, notifierId: number, referenceId: number, notification: Notification): Promise<void> {

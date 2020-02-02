@@ -48,13 +48,8 @@ export async function objectLiked(request: Express.Request, response: Express.Re
 }
 
 export async function recalculateObjectsLikeCount(id: number): Promise<void> {
-    const object = await Objects.findOneById(id);
-    if (!object) {
-        return;
-    }
-
     const likes = await Likes.countLikes(id);
-    if (!likes) {
+    if (likes == null) {
         return;
     }
 

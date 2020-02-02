@@ -47,7 +47,13 @@ export class Favourites {
     }
 
     public static async insert(objectId: number, userId: number): Promise<boolean> {
-        const query = `INSERT INTO favourites (object_id, user_id, favourites) VALUES (?, ?, UNIX_TIMESTAMP() * 1000);`;
+        const query = `INSERT INTO favourites (object_id, user_id, favourited) VALUES (?, ?, UNIX_TIMESTAMP() * 1000);`;
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [objectId, userId]);
+        return recordInsertedCorrectly(result);
+    }
+
+    public static async remove(objectId: number, userId: number): Promise<boolean> {
+        const query = `DELETE FROM favourites WHERE object_id = ? AND user_id = ?;`;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [objectId, userId]);
         return recordInsertedCorrectly(result);
     }

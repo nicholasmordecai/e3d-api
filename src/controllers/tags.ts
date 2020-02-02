@@ -45,5 +45,12 @@ export async function tagObject(objectID: number, tags: string[]): Promise<void>
         }
 
         await ObjectTags.insertMultiple(objectTags);
+        updateTagUsageCounter(tagIdsToInsert);
+    }
+}
+
+export async function updateTagUsageCounter(tagIds: number[]) {
+    for (const id of tagIds) {
+        ObjectTags.countTagUsage(id);
     }
 }
