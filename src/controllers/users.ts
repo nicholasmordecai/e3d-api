@@ -3,9 +3,9 @@ import { Users, IUser } from './../models/users';
 import { Likes, ILike } from './../models/likes';
 import { Favourites, IFavourite } from './../models/favourites';
 import { Objects, IObject } from './../models/objects';
+import { Collections, ICollection } from '../models/collections';
 import { Respond } from './../utils/respond';
 import { nonRestrictedRoute } from './auth';
-import { Collections } from '../models/collections';
 
 interface ISanitizedUser {
     firstname: string,
@@ -19,6 +19,7 @@ interface ISanitizedPrivateProfile {
     likes: ILike[];
     objects: IObject[];
     favourites: IFavourite[];
+    collections: ICollection[];
 }
 
 export async function getUserProfile(request: Express.Request, response: Express.Response) {
@@ -57,6 +58,7 @@ export async function getCompleteUserProfile(request: Express.Request, response:
     let likes: ILike[];
     let objects: IObject[];
     let favourites: IFavourite[];
+    let collections: ICollection[];
 
     // get the core user profile
     try {
@@ -88,7 +90,6 @@ export async function getCompleteUserProfile(request: Express.Request, response:
         return Respond.Like.errorSearchingForAllLikes(response, null, error, { user: user, likes: likes });
     }
 
-
     // get all user favourites
     try {
         favourites = await Favourites.findAllByUserID(request.userId);
@@ -99,6 +100,14 @@ export async function getCompleteUserProfile(request: Express.Request, response:
         return Respond.Like.errorSearchingForAllLikes(response, null, error, { user: user, likes: likes });
     }
 
+    try {
+        collections = await Collections.findAllByUserId(request.userId);
+        if (collections == null) {
+            return Respond.Collection.errorSearchingForCollectionWithFromUserId(response, null, null, { user: user, objects });
+        }
+    } catch (error) {
+        return Respond.Collection.errorSearchingForCollection(response, null, error, { user: user, collections: collections });
+    }
 
     const sanitizedUser = sanitizeUserData(user);
 
@@ -107,6 +116,7 @@ export async function getCompleteUserProfile(request: Express.Request, response:
         likes,
         objects,
         favourites,
+        collections,
     };
 
     return Respond.success(response, profile);

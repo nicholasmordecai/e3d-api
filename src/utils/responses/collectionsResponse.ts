@@ -53,4 +53,12 @@ export class CollectionResponse {
     public static couldNotUpdateCollection(response:Response, data?: any, error?: any, debug?: any): void {
         internalServerError(response, 4905, 'Database error when updating collection', data, error, debug);
     }
+
+    public static errorSearchingForCollectionWithFromUserId(response:Response, data?: any, error?: any, debug?: any) : void {
+        internalServerError(response, 4906, 'Database error when searching for collection by user ID', data, error, debug);
+    }
+
+    public static errorSearchingForAllCollections(response:Response, data?: any, error?: any, debug?: any) : void {
+        internalServerError(response, 4907, 'Database error when searching for all collections', data, error, debug);
+    }
 }
