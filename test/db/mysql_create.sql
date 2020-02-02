@@ -8,10 +8,12 @@ CREATE TABLE `users` (
   `banned` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `exp` int(11) NOT NULL DEFAULT '0',
   `level` int(3) NOT NULL DEFAULT '1',
+  `tracking_id` varchar(36) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `email_UNIQUE` (`email`),
+  UNIQUE KEY `tracking_id_UNIQUE` (`tracking_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `tokens` (
@@ -40,10 +42,8 @@ CREATE TABLE `objects` (
   `views` int(15) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  FULLTEXT KEY `title` (`title`,`description`),
-  FULLTEXT KEY `description` (`description`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
+  FULLTEXT KEY `title` (`title`)
+) ENGINE=InnoDB AUTO_INCREMENT=55761 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `object_version` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -54,23 +54,20 @@ CREATE TABLE `object_version` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-
 CREATE TABLE `likes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `object_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
+  `object_id` int(11) unsigned NOT NULL,
   `liked` bigint(36) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `favourites` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `object_id` int(11) unsigned NOT NULL,
-  `favourited` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `favourited` bigint(36) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -82,9 +79,10 @@ CREATE TABLE `collections` (
   `visibility` tinyint(2) unsigned NOT NULL DEFAULT '1',
   `followers` int(11) NOT NULL DEFAULT '0',
   `created_at` bigint(36) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+  `thumbnail_src` varchar(120) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `collection_objects` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -92,9 +90,11 @@ CREATE TABLE `collection_objects` (
   `user_id` int(11) unsigned NOT NULL,
   `object_id` int(11) unsigned NOT NULL,
   `added_at` bigint(36) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+  PRIMARY KEY (`id`),
+  KEY `collection_id` (`collection_id`),
+  KEY `user_id` (`user_id`),
+  KEY `object_id` (`object_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `comments` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -108,19 +108,20 @@ CREATE TABLE `comments` (
 CREATE TABLE `notifications` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
+  `notifier_id` int(11) unsigned NOT NULL,
   `action` tinyint(4) NOT NULL,
   `reference_id` int(11) NOT NULL,
   `seen_at` bigint(36) DEFAULT NULL,
   `created_at` bigint(36) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(45) NOT NULL,
   `created_at` bigint(36) unsigned NOT NULL,
+  `count` int(9) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
@@ -131,3 +132,11 @@ CREATE TABLE `object_tag` (
   `tagged_at` bigint(36) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `search_history` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `search_term` varchar(45) NOT NULL,
+  `timestamp` bigint(36) NOT NULL,
+  `user_tracking_id` varchar(36) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;

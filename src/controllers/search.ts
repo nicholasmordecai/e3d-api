@@ -3,7 +3,7 @@ import { Objects } from '../models/objects';
 import { ObjectTags } from './../models/objectTags';
 import { Respond } from '../utils/respond';
 import { nonRestrictedRouteTrackingId } from './auth';
-import { SearchHistory } from '../models/search_history';
+import { SearchHistory } from '../models/searchHistory';
 
 export async function searchByKeyword(request: Express.Request, response: Express.Response) {
     const keyword = request.body.keyword;

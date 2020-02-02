@@ -6,6 +6,7 @@ import { recordInsertedCorrectly, returnAll } from '../utils/dbUtils';
 export interface ITag {
     id: number;
     tag: string;
+    count: number;
 };
 /* eslint-enable */
 
