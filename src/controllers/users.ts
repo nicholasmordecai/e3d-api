@@ -28,7 +28,6 @@ export async function getUserProfile(request: Express.Request, response: Express
         return Respond.User.noUserIdFromJWTToken(response);
     }
 
-
     let user: IUser;
     try {
         user = await Users.findOneByID(request.userId);
