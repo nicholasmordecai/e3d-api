@@ -88,7 +88,6 @@ export async function getCompleteUserProfile(request: Express.Request, response:
         return Respond.Like.errorSearchingForAllLikes(response, null, error, { user: user, likes: likes });
     }
 
-
     // get all user favourites
     try {
         favourites = await Favourites.findAllByUserID(request.userId);

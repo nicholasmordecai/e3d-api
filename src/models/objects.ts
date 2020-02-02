@@ -73,4 +73,10 @@ export class Objects {
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [count, id]);
         return recordUpdatedCorrectly(result);
     }
+
+    public static async updateObjectFavouriteCounter(id: number, count: number): Promise<boolean> {
+        const query = `UPDATE objects SET favourites = ? WHERE id = ?`;
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [count, id]);
+        return recordUpdatedCorrectly(result);
+    }
 }
