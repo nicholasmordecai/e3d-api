@@ -1,10 +1,13 @@
 import * as Express from 'express';
 import { Objects, IObject } from '../models/objects';
 import { Respond } from '../utils/respond';
+import { v4 } from 'uuid';
 
 
-export async function createNewObject() {
+export async function createNewObject(request: Express.Request, response: Express.Response) {
+    const userId: number = request.userId;
 
+    const folderName: string = v4();
 }
 
 export async function getObjectByIDForWebView(request: Express.Request, response: Express.Response) {
