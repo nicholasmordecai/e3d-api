@@ -41,5 +41,9 @@ export async function logSearch(request: Express.Request, searchTerm: string): P
         }
 
         return SearchHistory.createSearchHistory(searchTerm, userTrackingId);
-    } catch (error) {}
+    } catch (error) { }
+}
+
+export async function featuredObjects(request: Express.Request, searchTerm: string): Promise<void> {
+
 }

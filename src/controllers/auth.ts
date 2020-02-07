@@ -213,3 +213,22 @@ export function restrictedRoute(request: Express.Request, response: Express.Resp
         }
     }
 }
+
+export function restrictedPage(request: Express.Request, response: Express.Response, next: Express.NextFunction) {
+    const token: string = request.headers.authorization as string;
+
+    if (token == null) {
+        return Respond.Auth.noAccessTokenPassed(response);
+    }
+
+    try {
+        const payload = decodeAccessToken(token);
+        Respond.success(response);
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return Respond.Auth.accessTokenExpired(response, null, null, { accessToken: token });
+        } else {
+            return Respond.Auth.accessTokenExpired(response, null, error, { accessToken: token });
+        }
+    }
+}
