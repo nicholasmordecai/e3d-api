@@ -11,3 +11,4 @@ DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS object_tag;
 DROP TABLE IF EXISTS search_history;
+DROP TABLE IF EXISTS categories

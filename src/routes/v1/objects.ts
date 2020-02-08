@@ -1,5 +1,5 @@
 import { BaseRoute } from '../../system/baseRoute';
-import { createNewObject, getObjectByIDForWebView } from './../../controllers/objects';
+import { createNewObject, getObjectByIDForWebView, updateObjectCategories } from './../../controllers/objects';
 import { searchByKeyword } from './../../controllers/search';
 import { objectLiked, getAllObjectLikes, totalCountOfLikesByObjectId } from './../../controllers/likes';
 import { objectFavourited, unfavouriteObject } from './../../controllers/favourites';
@@ -23,5 +23,8 @@ export class ObjectRoute extends BaseRoute {
         // Favourites
         this.post('/:id/favourite', objectFavourited, true);
         this.delete('/:id/favourite', unfavouriteObject, true);
+
+        // Categories
+        this.patch('/update', updateObjectCategories, true);
     }
 }
