@@ -9,40 +9,40 @@ export class BaseRoute {
         this.router = Router();
     }
 
-    get(route: string, handler: any, restructed: boolean = false) {
-        if (restructed) {
+    get(route: string, handler: any, restricted: boolean = false) {
+        if (restricted) {
             this.router.get(`${route}`, restrictedRoute, handler);
         } else {
             this.router.get(`${route}`, handler);
         }
     }
 
-    post(route: string, handler: any, restructed: boolean = false) {
-        if (restructed) {
+    post(route: string, handler: any, restricted: boolean = false) {
+        if (restricted) {
             this.router.post(`${route}`, restrictedRoute, handler);
         } else {
             this.router.post(`${route}`, handler);
         }
     }
 
-    put(route: string, handler: any, restructed: boolean = false) {
-        if (restructed) {
+    put(route: string, handler: any, restricted: boolean = false) {
+        if (restricted) {
             this.router.put(`${route}`, restrictedRoute, handler);
         } else {
             this.router.put(`${route}`, handler);
         }
     }
 
-    patch(route: string, handler: any, restructed: boolean = false) {
-        if (restructed) {
+    patch(route: string, handler: any, restricted: boolean = false) {
+        if (restricted) {
             this.router.patch(`${route}`, restrictedRoute, handler);
         } else {
             this.router.patch(`${route}`, handler);
         }
     }
 
-    delete(route: string, handler: any, restructed: boolean = false) {
-        if (restructed) {
+    delete(route: string, handler: any, restricted: boolean = false) {
+        if (restricted) {
             this.router.delete(`${route}`, restrictedRoute, handler);
         } else {
             this.router.delete(`${route}`, handler);
