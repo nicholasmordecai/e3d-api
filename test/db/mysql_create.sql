@@ -146,7 +146,7 @@ CREATE TABLE `search_history` (
 CREATE TABLE `e3d`.`categories` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `category` VARCHAR(45) NOT NULL,
-  `parent` INT UNSIGNED DEFAULT '0', 
+  `parent_id` INT UNSIGNED DEFAULT '0', 
   `count` INT UNSIGNED NOT NULL DEFAULT '0',
   `active` tinyint(1) unsigned NOT NULL DEFAULT '1',
   `is_featured` tinyint(1) unsigned NOT NULL default '0',

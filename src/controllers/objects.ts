@@ -30,20 +30,20 @@ export async function getObjectByIDForWebView(request: Express.Request, response
 }
 
 export async function updateObjectCategories(request: Express.Request, response: Express.Response) {
-    const id = parseInt(request.body.id);
+    const id = parseInt(request.params.id);
 
     const categoryEdit: ICategoryEdit = {
         id,
-        primary_category: request.body.primary_category,
-        secondary_one: request.body.secondary_one,
-        secondary_two: request.body.secondary_two,
+        primaryCategory: request.body.primary_category,
+        secondaryOne: request.body.secondary_one,
+        secondaryTwo: request.body.secondary_two,
     };
 
     if (id == null) {
         return Respond.Object.noObjectIdPassed(response);
     }
 
-    if (categoryEdit.primary_category == null && categoryEdit.secondary_one == null && categoryEdit.secondary_two == null) {
+    if (categoryEdit.primaryCategory == null && categoryEdit.secondaryOne == null && categoryEdit.secondaryTwo == null) {
         return Respond.Object.noEditDataPassed(response);
     }
 

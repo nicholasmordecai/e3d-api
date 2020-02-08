@@ -25,6 +25,6 @@ export class ObjectRoute extends BaseRoute {
         this.delete('/:id/favourite', unfavouriteObject, true);
 
         // Categories
-        this.patch('/update', updateObjectCategories, true);
+        this.patch('/:id/update', updateObjectCategories, true);
     }
 }

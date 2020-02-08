@@ -34,9 +34,9 @@ interface IKeywordSearchResult {
 
 export interface ICategoryEdit {
     id: number;
-    primary_category: number;
-    secondary_one: number;
-    secondary_two: number;
+    primaryCategory: number;
+    secondaryOne: number;
+    secondaryTwo: number;
 }
 
 /* eslint-enable */
@@ -91,13 +91,13 @@ export class Objects {
         return recordUpdatedCorrectly(result);
     }
 
-    // How do I handle a update query where primary and secondaryTwo are provided byt not secondaryOne without duplicate code?
-    public static async updateObjectCategories(categoryEdit:ICategoryEdit): Promise<boolean> {
-        console.log(categoryEdit);
 
-        const query = `UPDATE objects SET primary_category = ? WHERE id = ?`;
+    public static async updateObjectCategories(categoryEdit:ICategoryEdit): Promise<boolean> {
+        const query = `UPDATE objects SET primary_category = ?, secondary_one = ?, secondary_two = ? WHERE id = ?`;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [
-            categoryEdit.primary_category,
+            categoryEdit.primaryCategory,
+            categoryEdit.secondaryOne,
+            categoryEdit.secondaryTwo,
             categoryEdit.id]);
 
         return recordUpdatedCorrectly(result);
