@@ -29,6 +29,7 @@ export async function searchByKeyword(request: Express.Request, response: Expres
 
         return Respond.success(response, result);
     } catch (error) {
+        console.log(error)
         return Respond.Search.couldNotRunSearchQuery(response, null, error, { keyword: keyword });
     }
 }

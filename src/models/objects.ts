@@ -64,7 +64,7 @@ export class Objects {
             ORDER BY score DESC
             LIMIT ?;`;
 
-        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [keyword, keyword, limit]);
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [keyword, keyword, limit], true);
         return returnAll(result);
     }
 
