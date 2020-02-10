@@ -102,4 +102,11 @@ export class Objects {
 
         return recordUpdatedCorrectly(result);
     }
+
+    public static async getFeaturedObjects(): Promise<IObject[] | null> { 
+        const query: string = `SELECT * FROM objects WHERE featured = 1 LIMIT 4`;
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [], true);
+
+        return returnAll(result);
+    }
 }

@@ -18,7 +18,7 @@ export class Config {
     public static options: IOptions;
 
     private static readonly emptyConfig: { [key: string]: IConfigExample } = {
-        environment: { env: 'NODE_ENV', required: true, type: 'string' },
+        environment: { env: 'SERVER_ENV', required: true, type: 'string' },
         mysqlHost: { env: 'MYSQL_DB_HOST', required: true, type: 'string' },
         mysqlUser: { env: 'MYSQL_DB_USER', required: true, type: 'string' },
         mysqlPassword: { env: 'MYSQL_DB_PASSWORD', required: true, type: 'string' },
@@ -81,7 +81,6 @@ export class Config {
         }
 
         Config.options = confirmedConfig;
-
         return confirmedConfig;
     }
 

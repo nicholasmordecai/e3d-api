@@ -77,6 +77,13 @@ export function serviceUnavailable(response: Response, code: number, reason: str
 }
 
 function generateResponseBody(code: number, reason: string, data?: any, error?: any, debug?: any) {
+    if (Config.options.environment === 'production') {
+        return {
+            data: data,
+            code: code,
+        }
+    }
+
     const responseBody: IAPIError = {
         code: code,
         time: new Date().getTime(),
@@ -94,7 +101,7 @@ function generateResponseBody(code: number, reason: string, data?: any, error?: 
         responseBody.reason = reason;
     }
 
-    if (Config.options.environment === 'development' && debug != null) {
+    if(debug) {
         responseBody.debug = debug;
     }
 

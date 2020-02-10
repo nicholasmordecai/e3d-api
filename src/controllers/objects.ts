@@ -7,10 +7,24 @@ export async function createNewObject() {
 
 }
 
-export async function getObjectByIDForWebView(request: Express.Request, response: Express.Response) {
+export async function getHomeFeaturedObjects(request: Express.Request, response: Express.Response): Promise<void> {
+    console.log('hi')
+    try {
+        const featured = await Objects.getFeaturedObjects();
+        if (featured == null) {
+            Respond.Object.errorGettingFeaturedObjects(response, null, null, {result: featured});
+        } else {
+            Respond.success(response, featured);
+        }
+    } catch (error) {
+        Respond.Object.errorGettingFeaturedObjects(response, null, error);
+    }
+}
+
+export async function getObjectByIDForWebView(request: Express.Request, response: Express.Response): Promise<void> {
     const id = parseInt(request.params.id);
 
-    if (id == null) {
+    if (id == null || isNaN(id) === true) {
         return Respond.Object.noObjectIdPassed(response);
     }
 
@@ -29,7 +43,7 @@ export async function getObjectByIDForWebView(request: Express.Request, response
     }
 }
 
-export async function updateObjectCategories(request: Express.Request, response: Express.Response) {
+export async function updateObjectCategories(request: Express.Request, response: Express.Response): Promise<void> {
     const id = parseInt(request.params.id);
 
     const categoryEdit: ICategoryEdit = {
@@ -39,7 +53,7 @@ export async function updateObjectCategories(request: Express.Request, response:
         secondaryTwo: request.body.secondary_two,
     };
 
-    if (id == null) {
+    if (id == null || isNaN(id) === true) {
         return Respond.Object.noObjectIdPassed(response);
     }
 
@@ -47,7 +61,7 @@ export async function updateObjectCategories(request: Express.Request, response:
         return Respond.Object.noEditDataPassed(response);
     }
 
-    const success:boolean = await Objects.updateObjectCategories(categoryEdit);
+    const success: boolean = await Objects.updateObjectCategories(categoryEdit);
 
     if (!success) {
         // Add an Error response for could not update categories
