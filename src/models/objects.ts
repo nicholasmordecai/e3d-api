@@ -16,6 +16,9 @@ export interface IObject {
     followers: number;
     builds: number;
     src_url: number;
+    primary_category: number;
+    secondary_one: number;
+    secondary_two: number;
 };
 
 interface IKeywordSearchResult {
@@ -28,6 +31,14 @@ interface IKeywordSearchResult {
     match: number;
     tags? 
 }
+
+export interface ICategoryEdit {
+    id: number;
+    primaryCategory: number;
+    secondaryOne: number;
+    secondaryTwo: number;
+}
+
 /* eslint-enable */
 
 export class Objects {
@@ -77,6 +88,18 @@ export class Objects {
     public static async updateObjectFavouriteCounter(id: number, count: number): Promise<boolean> {
         const query = `UPDATE objects SET favourites = ? WHERE id = ?`;
         const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [count, id]);
+        return recordUpdatedCorrectly(result);
+    }
+
+
+    public static async updateObjectCategories(categoryEdit:ICategoryEdit): Promise<boolean> {
+        const query = `UPDATE objects SET primary_category = ?, secondary_one = ?, secondary_two = ? WHERE id = ?`;
+        const result: [any, FieldPacket[]] | QueryError = await MySQL.execute(query, [
+            categoryEdit.primaryCategory,
+            categoryEdit.secondaryOne,
+            categoryEdit.secondaryTwo,
+            categoryEdit.id]);
+
         return recordUpdatedCorrectly(result);
     }
 }

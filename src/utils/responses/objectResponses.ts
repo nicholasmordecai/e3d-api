@@ -7,6 +7,10 @@ export class ObjectResponse {
         badRequest(response, 1800, 'No refresh token was passed', data, error, debug);
     }
 
+    public static noEditDataPassed(response:Response, data?: any, error?: any, debug?: any) {
+        badRequest(response, 1801, 'No data was provided for the update', data, error, debug);
+    }
+
     // Internal server errors - 1900:1999
     public static errorSearchingForObject(response:Response, data?: any, error?: any, debug?: any): void {
         internalServerError(response, 1900, 'Database error when searching for an object by ID', data, error, debug);

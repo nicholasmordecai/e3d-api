@@ -39,6 +39,9 @@ CREATE TABLE `objects` (
   `builds` int(11) unsigned NOT NULL DEFAULT '0',
   `src_url` varchar(255) NOT NULL DEFAULT '',
   `views` int(15) unsigned NOT NULL DEFAULT '0',
+  `primary_category` int(10) unsigned DEFAULT '0',
+  `secondary_one` int(10) unsigned DEFAULT '0',
+  `secondary_two` int(10) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   FULLTEXT KEY `title` (`title`)
@@ -139,3 +142,14 @@ CREATE TABLE `search_history` (
   `user_tracking_id` varchar(36) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `e3d`.`categories` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `category` VARCHAR(45) NOT NULL,
+  `parent_id` INT UNSIGNED DEFAULT '0', 
+  `count` INT UNSIGNED NOT NULL DEFAULT '0',
+  `active` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `is_featured` tinyint(1) unsigned NOT NULL default '0',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `category_UNIQUE` (`category` ASC)
+  ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
