@@ -4,6 +4,7 @@ import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import * as helmet from 'helmet';
 import * as http from 'http';
+import * as cors from 'cors';
 
 http.globalAgent.maxSockets = Infinity;
 
@@ -32,6 +33,8 @@ export class HTTPServer {
 
         // use the cookie parser module to enable json data being accepted
         this._expressServer.use(cookieParser());
+
+        this._expressServer.use(cors());
 
         // list the accessible API versions here
         this._expressServer.use('/api/v1', V1Routes.setup());
