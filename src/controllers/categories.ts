@@ -11,6 +11,6 @@ export async function getAllCategories(request: Express.Request, response: Expre
             Respond.success(response, categories);
         }
     } catch (error) {
-        Respond.notFound(response, null, error, null);
+        Respond.Category.errorSearchingForCategories(response, null, error, null);
     }
 }
