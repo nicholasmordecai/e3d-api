@@ -64,11 +64,11 @@ export class Objects {
         return returnAll(result);
     }
 
-    public static async findFromKeywordSearch(keyword: string, limit: number = 20): Promise<IKeywordSearchResult[] | null> {
+    public static async findFromKeywordSearch(keyword: string, limit: number = 9): Promise<IKeywordSearchResult[] | null> {
         // TODO the match happens twice.. I'm 99% sure this is super not effecient. Find a better solution
         const query = `
             SELECT 
-                id, views, favourites, likes, title, builds, src_url, MATCH (title) AGAINST (?) as score
+                id, views, favourites, likes, featured, title, builds, src_url, MATCH (title) AGAINST (?) as score
             FROM objects 
             WHERE 
                 MATCH (title) AGAINST (?) > 0 

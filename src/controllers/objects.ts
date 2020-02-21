@@ -22,6 +22,7 @@ export async function getHomeFeaturedObjects(request: Express.Request, response:
 }
 
 export async function getObjectByIDForWebView(request: Express.Request, response: Express.Response): Promise<void> {
+    console.log('get object for web view by id:', request.params.id)
     const id = parseInt(request.params.id);
 
     if (id == null || isNaN(id) === true) {
