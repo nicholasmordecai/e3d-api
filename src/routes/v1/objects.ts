@@ -19,7 +19,7 @@ export class ObjectRoute extends BaseRoute {
         this.get('/:id', getObjectByIDForWebView);
         this.get('/:id/likes', getAllObjectLikes);
         this.get('/:id/like-count', totalCountOfLikesByObjectId);
-        
+
         // Categories
         this.patch('/:id/update', updateObjectCategories, true);
 

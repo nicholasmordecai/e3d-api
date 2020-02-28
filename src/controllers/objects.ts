@@ -8,11 +8,10 @@ export async function createNewObject() {
 }
 
 export async function getHomeFeaturedObjects(request: Express.Request, response: Express.Response): Promise<void> {
-    console.log('hi')
     try {
         const featured = await Objects.getFeaturedObjects();
         if (featured == null) {
-            Respond.Object.errorGettingFeaturedObjects(response, null, null, {result: featured});
+            Respond.Object.errorGettingFeaturedObjects(response, null, null, { result: featured });
         } else {
             Respond.success(response, featured);
         }
