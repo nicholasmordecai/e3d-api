@@ -25,6 +25,7 @@ export async function searchByKeyword(request: Express.Request, response: Expres
         // find a better way to do this - Promise.all or something non blocking
         for (const object of result) {
             object.tags = await ObjectTags.getTagsByObjectId(object.id);
+            
         }
 
         return Respond.success(response, result);
